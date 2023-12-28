@@ -11,7 +11,7 @@ app.use((req, res, next) => {
 app.use(express.static('client'));
 
 let list = ["yes", "no", "test"];
-let pygora_goat = ["Very cool goat", "Yep"]
+let pygora_goat = { Name: "Pygora Goat" };
 
 app.post('/getData', (req, resp) => {
     resp.send(list);
@@ -19,6 +19,10 @@ app.post('/getData', (req, resp) => {
 
 app.post('/pygora', (req, resp) => {
     resp.send(pygora_goat);
+});
+
+app.get('/pygora/name', (req, resp) => {
+    resp.send(pygora_goat["Name"]);
 });
 
 app.get('/pygora', (req, resp) => {
