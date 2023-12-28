@@ -11,13 +11,22 @@ app.use((req, res, next) => {
 app.use(express.static('client'));
 
 let list = ["yes", "no", "test"];
+let pygora_goat = ["Very cool goat", "Yep"]
 
 app.post('/getData', (req, resp) => {
     resp.send(list);
 });
 
+app.post('/pygora', (req, resp) => {
+    resp.send(pygora_goat);
+});
+
+app.get('/pygora', (req, resp) => {
+    resp.send(pygora_goat);
+});
+
 app.get('/list', function (req, resp) {
-    resp.send(list);
+    resp.send(pygora_goat);
 });
 
 const server = app.listen(8080, () => {
