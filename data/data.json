@@ -1,7 +1,8 @@
 [
     {
         "species": ["kiko_goat"],
-        "name": ["Kiko Goat"]
+        "name": ["Kiko Goat"],
+        "biology":["is a goat yep"]
     },
     {
         "species": ["pygora_goat"],
