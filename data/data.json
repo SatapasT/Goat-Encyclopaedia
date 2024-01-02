@@ -2,11 +2,12 @@
     {
         "species": ["kiko_goat"],
         "name": ["Kiko Goat"],
-        "biology":["is a goat yep"]
+        "biology":["is a goat yep","Average Height: Does: 26 to 30 in or 66 to 76 cm Bucks: 30 to 37 in or 76 to 94 cm","Goat goat goat"]
     },
     {
         "species": ["pygora_goat"],
-        "name": ["Pygora Goat"]
+        "name": ["Pygora Goat"],
+        "biology":["Is also goat"]
     },
     {
         "species": ["angora_goat"],

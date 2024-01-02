@@ -31,7 +31,13 @@ app.get('/:species/:value', (req, resp) => {
     const value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));
     if (goatEntry) {
-        resp.send(goatEntry[value].toString());
+        let i = 0;
+        let list = [];
+        while (i < goatEntry[value].length) {
+            list.push(`<li>${goatEntry[value][i]}</li>`);
+            i++;
+        }
+        resp.send(list.join(''));
         console.log(species,value, goatEntry);
     } else {
         resp.status(404).send('Loading error, try again');
