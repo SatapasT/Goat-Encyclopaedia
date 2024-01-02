@@ -18,7 +18,7 @@ app.get('/:species', (req, resp) => {
     const species = req.params.species;
     const goatEntry = data.find(entry => entry.species.includes(species));
     if (goatEntry) {
-        resp.send(goatEntry.name.toString());
+        resp.send(goatEntry["name"].toString());
         console.log(species, goatEntry);
     } else {
         resp.status(404).send('Loading error, try again');
@@ -31,7 +31,7 @@ app.get('/:species/:value', (req, resp) => {
     const value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));
     if (goatEntry) {
-        resp.send(goatEntry.value);
+        resp.send(goatEntry[value].toString());
         console.log(species,value, goatEntry);
     } else {
         resp.status(404).send('Loading error, try again');

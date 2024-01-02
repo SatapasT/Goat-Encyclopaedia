@@ -6,7 +6,7 @@ document.getElementById('pygmy_goat').addEventListener('click', fetchData_pygmy)
 document.getElementById('form_select').addEventListener('change', form_selected);
 
 let species = ""
-let form_selection = ""
+let form_selection = "biology"
 
 function fetchData_pygora() {
     species = 'pygora_goat';
