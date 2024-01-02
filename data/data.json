@@ -1,0 +1,18 @@
+[
+    {
+        "species": ["kiko_goat"],
+        "name": ["Kiko Goat"]
+    },
+    {
+        "species": ["pygora_goat"],
+        "name": ["Pygora Goat"]
+    },
+    {
+        "species": ["angora_goat"],
+        "name": ["Angora Goat"]
+    },
+    {
+        "species": ["pygmy_goat"],
+        "name": ["Pygmy Goat"]
+    }
+]
