@@ -18,7 +18,7 @@ app.get('/:species', (req, resp) => {
     const species = req.params.species;
     const goatEntry = data.find(entry => entry.species.includes(species));
     if (goatEntry) {
-        resp.send(goatEntry["name"].toString());
+        resp.send(`<strong>${goatEntry["name"].toString()}</strong>`);
         console.log(species, goatEntry);
     } else {
         resp.status(404).send('Loading error, try again');
@@ -31,11 +31,10 @@ app.get('/:species/:value', (req, resp) => {
     const value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));
     if (goatEntry) {
-        let i = 0;
         let list = [];
-        while (i < goatEntry[value].length) {
-            list.push(`<li>${goatEntry[value][i]}</li>`);
-            i++;
+        var colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"}; 
+        for (let i =0; i < goatEntry[value].length; i++) {
+            list.push(`<div class="row"><div class="col ${colour_dict[i%2]}">${goatEntry[value][i]}</div></div>`);
         }
         resp.send(list.join(''));
         console.log(species,value, goatEntry);
