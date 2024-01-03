@@ -1,3 +1,22 @@
 body {
     background-color: #4cff497e!important;
 }
+
+.carousel{
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-item {
+    height: 300px;
+    width: 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.carousel-image {
+    height: 100%;
+    width: 100%;
+}

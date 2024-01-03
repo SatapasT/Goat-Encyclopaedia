@@ -53,4 +53,3 @@ function updatePage() {
             console.error('Error fetching data:', error);
         });
 }
-

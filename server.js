@@ -34,7 +34,7 @@ app.get('/:species/:value', (req, resp) => {
         let list = [];
         var colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"}; 
         for (let i =0; i < goatEntry[value].length; i++) {
-            list.push(`<div class="row"><div class="col ${colour_dict[i%2]}">${goatEntry[value][i]}</div></div>`);
+            list.push(`<div class="row"><div class="col text-start ${colour_dict[i%2]}">${goatEntry[value][i]}</div></div>`);
         }
         resp.send(list.join(''));
         console.log(species,value, goatEntry);
