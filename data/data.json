@@ -11,9 +11,28 @@
         "Does height: 26 to 30 in or 66 to 76 cm",
         "Does weight: 100 to 180 lbs or 45 to 83 kg",
         "Bucks height: 30 to 37 in or 76 to 94 cm",
-        "Bucks weight: 200 to 250 lbs or 90 to 114 kg"
-        
-    ]
+        "Bucks weight: 200 to 250 lbs or 90 to 114 kg"],
+        "pro_con": ["<h2>Pros</h2>",
+        "Hassle-free and easy to care for",
+        "Can resist any parasitic infestations",
+        "Can tolerate extreme weather conditions (Hardy)",
+        "Low maintenance",
+        "Earn more profit",
+        "Can gain weight easily",
+        "Kids can grow rapidly",
+        "Can manage weeds in your yield",
+        "Friendly, easy-going, calm, and gentle, but alert and active",
+        "--------------------------------------------------------------",
+        "<h2>Cons</h2>",    
+        "Medium size",
+        "Not a good milk producer",
+        "Uneasy to handle if you’re a beginner",
+        "Sometimes become wild or aggressive"
+    ],
+        "history" : ["The Kiko is a breed of meat goat originating from New Zealand. Kiko comes from the Māori word for meat. The Kiko breed was developed in the 1980s by Garrick and Anne Batten, who cross-bred local feral goats with imported dairy goat bucks of the Anglo-Nubian, Saanen, and Toggenburg breeds. The only aims of the breeding programme were fast rate of growth and ability to survive in the pastoral conditions of the New Zealand hill country.",
+        "The Kiko breed was imported into the United States in 1992 by Goatex Group LLC. Today, three registries exist in the US for Kikos: the AKGA, the IKGA, and the NKR, the latter of which is the largest of the three. Through these agencies, Kikos could be registered as 100% New Zealand, meaning that their lineage can be traced all the way back to the original New Zealand stock. 'Purebreds' refer to goats that are at least 15/16ths New Zealand stock[6] and 'percentages' are those that are at least 50% New Zealand stock. Kiko-Boer crosses can also be registered as Genemaster™ through the NKR. ",
+        "<strong>Information from Wikipedia.org</strong>"]
+
     },
     {
         "species": ["pygora_goat"],

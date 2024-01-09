@@ -57,29 +57,27 @@
     <div class="row">
         <div class="col bg-warning p-3 border-bottom border-dark border-start-0">
             <select class="form-select" aria-label="Default select" id="form_select">
-                <option value="biology">Biology</option>
-                <option value="image_gallery">Image Gallery</option>
+                <option selected value="biology">Biology</option>
+                <option value="pro_con">Pros and Cons</option>
                 <option value="history">History</option>
                 <option value="random_trivial">Random Trivial </option>
             </select>
         </div>
     </div>
       <div class="row">
-        <div class="col-6">
+        <div class="col-6 bg-warning border-end border-dark">
           <div id="information_div"> Goat! </div>
         </div>
-        <div class="col-6">
-          <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner object-fit-cover rounded ">
-              <div class="carousel-item active" data-bs-interval="2000">
-                <img src="assets/images/kiko_goat/1.jpg" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item" data-bs-interval="2000">
-                <img src="assets/images/kiko_goat/2.jpg" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item" data-bs-interval="2000">
-                <img src="assets/images/kiko_goat/3.jpg" class="d-block w-100" alt="...">
-              </div>
+        <div class="col-6 bg-warning">
+          <div class="row">
+            <div id="img_div"></div>
+          </div>
+          <div class="row ">
+            <div class="col">
+              <button type="button" class="btn btn-secondary" id="img_left"> < </button>
+            </div>
+            <div class="col">
+              <button type="button" class="btn btn-secondary" id="img_right"> > </button>
             </div>
           </div>
         </div>

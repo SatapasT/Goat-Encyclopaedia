@@ -30,6 +30,7 @@ app.get('/:species/:value', (req, resp) => {
     const species = req.params.species;
     const value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));
+    
     if (goatEntry) {
         let list = [];
         var colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"}; 
@@ -38,6 +39,19 @@ app.get('/:species/:value', (req, resp) => {
         }
         resp.send(list.join(''));
         console.log(species,value, goatEntry);
+    } else {
+        resp.status(404).send('Loading error, try again');
+        console.log('loading error');
+    }
+});
+
+app.get('/:species/image/:current_img', (req, resp) => {
+    const species = req.params.species;
+    const current_img = req.params.current_img;
+    const goatEntry = data.find(entry => entry.species.includes(species));
+    if (goatEntry) {
+        resp.send(`<img src="assets/images/${species}/${parseInt(current_img) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(current_img) + 1}">`);
+        console.log(species,current_img, goatEntry);
     } else {
         resp.status(404).send('Loading error, try again');
         console.log('loading error');
