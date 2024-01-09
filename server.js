@@ -18,8 +18,7 @@ app.get('/:species', (req, resp) => {
     const species = req.params.species;
     const goatEntry = data.find(entry => entry.species.includes(species));
     if (goatEntry) {
-        resp.send(`<strong>${goatEntry["name"].toString()}</strong>`);
-        console.log(species, goatEntry);
+        resp.send(`<strong> > ${goatEntry["name"].toString()} < </strong>`);
     } else {
         resp.status(404).send('Loading error, try again');
         console.log('loading error');
@@ -30,28 +29,31 @@ app.get('/:species/:value', (req, resp) => {
     const species = req.params.species;
     const value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));
+    const colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"};
+    const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
     if (goatEntry && value == "pro_con"){
         let list = [];
-        let colour_selection = 0
-        let string_find = "<h2>"
-        const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
+        let header_position = 0
+        let string_find = ["Pros","Cons"]
+        
         for (let i =0; i < goatEntry[value].length; i++) {
             let entry = goatEntry[value][i]
-            if (entry.includes(string_find)){
-                colour_selection += 1
+            if (entry.includes(string_find[header_position])){
+                header_position += 1
+                list.push(`<div class="row"><div class="col text-start ${pro_con_colour_dict[header_position]} border-bottom"><h2>${entry}</h2></div></div>`);
+                continue;
             }
-            list.push(`<div class="row"><div class="col text-start ${pro_con_colour_dict[colour_selection]}">${entry}</div></div>`);
+            list.push(`<div class="row"><div class="col text-start ${pro_con_colour_dict[header_position]}">${entry}</div></div>`);
         }
         resp.send(list.join(''));
-        console.log(species,value, goatEntry);
     } else if (goatEntry) {
         let list = [];
-        const colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"}; 
+        
         for (let i =0; i < goatEntry[value].length; i++) {
-            list.push(`<div class="row"><div class="col text-start fs-6 ${colour_dict[i%2]}">${goatEntry[value][i]}</div></div>`);
+            let entry = goatEntry[value][i]
+            list.push(`<div class="row"><div class="col text-start fs-6 ${colour_dict[i%2]}">${entry}</div></div>`);
         }
         resp.send(list.join(''));
-        console.log(species,value, goatEntry);
     } else {
         resp.status(404).send('Loading error, try again');
         console.log('loading error');
@@ -64,7 +66,6 @@ app.get('/:species/image/:current_img', (req, resp) => {
     const goatEntry = data.find(entry => entry.species.includes(species));
     if (goatEntry) {
         resp.send(`<img src="assets/images/${species}/${parseInt(current_img) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(current_img) + 1}">`);
-        console.log(species,current_img, goatEntry);
     } else {
         resp.status(404).send('Loading error, try again');
         console.log('loading error');

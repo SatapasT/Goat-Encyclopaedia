@@ -17,6 +17,7 @@ function fetchData_pygora() {
     current_img = 1;
     updatePage();
     updateImg();
+    form_selected();
 }
 
 function fetchData_kiko() {
@@ -24,6 +25,7 @@ function fetchData_kiko() {
     current_img = 1;
     updatePage();
     updateImg();
+    form_selected();
 }
 
 function fetchData_angora() {
@@ -31,6 +33,7 @@ function fetchData_angora() {
     current_img = 1;
     updatePage();
     updateImg();
+    form_selected();
 }
 
 function fetchData_pygmy() {
@@ -38,6 +41,7 @@ function fetchData_pygmy() {
     current_img = 1;
     updatePage();
     updateImg();
+    form_selected();
 }
 
 function form_selected() {
