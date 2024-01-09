@@ -30,12 +30,25 @@ app.get('/:species/:value', (req, resp) => {
     const species = req.params.species;
     const value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));
-    
-    if (goatEntry) {
+    if (goatEntry && value == "pro_con"){
         let list = [];
-        var colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"}; 
+        let colour_selection = 0
+        let string_find = "<h2>"
+        const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
         for (let i =0; i < goatEntry[value].length; i++) {
-            list.push(`<div class="row"><div class="col text-start ${colour_dict[i%2]}">${goatEntry[value][i]}</div></div>`);
+            let entry = goatEntry[value][i]
+            if (entry.includes(string_find)){
+                colour_selection += 1
+            }
+            list.push(`<div class="row"><div class="col text-start ${pro_con_colour_dict[colour_selection]}">${entry}</div></div>`);
+        }
+        resp.send(list.join(''));
+        console.log(species,value, goatEntry);
+    } else if (goatEntry) {
+        let list = [];
+        const colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"}; 
+        for (let i =0; i < goatEntry[value].length; i++) {
+            list.push(`<div class="row"><div class="col text-start fs-6 ${colour_dict[i%2]}">${goatEntry[value][i]}</div></div>`);
         }
         resp.send(list.join(''));
         console.log(species,value, goatEntry);
