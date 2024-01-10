@@ -27,17 +27,17 @@ app.get('/:species', (req, resp) => {
 
 app.get('/:species/:value', (req, resp) => {
     const species = req.params.species;
-    const value = req.params.value;
+    const form_value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));
-    const colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"};
+    const item_colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"};
     const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
-    if (goatEntry && value == "pro_con"){
+    if (goatEntry && form_value == "pro_con"){
         let list = [];
         let header_position = 0
         let string_find = ["Pros","Cons"]
         
-        for (let i =0; i < goatEntry[value].length; i++) {
-            let entry = goatEntry[value][i]
+        for (let i =0; i < goatEntry[form_value].length; i++) {
+            let entry = goatEntry[form_value][i]
             if (entry.includes(string_find[header_position])){
                 header_position += 1
                 list.push(`<div class="row"><div class="col text-start ${pro_con_colour_dict[header_position]} border-bottom"><h2>${entry}</h2></div></div>`);
@@ -49,9 +49,9 @@ app.get('/:species/:value', (req, resp) => {
     } else if (goatEntry) {
         let list = [];
         
-        for (let i =0; i < goatEntry[value].length; i++) {
-            let entry = goatEntry[value][i]
-            list.push(`<div class="row"><div class="col text-start fs-6 ${colour_dict[i%2]}">${entry}</div></div>`);
+        for (let i =0; i < goatEntry[form_value].length; i++) {
+            let entry = goatEntry[form_value][i]
+            list.push(`<div class="row"><div class="col text-start fs-6 ${item_colour_dict[i%2]}">${entry}</div></div>`);
         }
         resp.send(list.join(''));
     } else {

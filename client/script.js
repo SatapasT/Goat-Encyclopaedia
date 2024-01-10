@@ -1,7 +1,8 @@
-document.getElementById('kiko_goat').addEventListener('click', fetchData_kiko);
-document.getElementById('pygora_goat').addEventListener('click', fetchData_pygora);
-document.getElementById('angora_goat').addEventListener('click', fetchData_angora);
-document.getElementById('pygmy_goat').addEventListener('click', fetchData_pygmy);
+document.getElementById('navbar_icon').addEventListener('click', fetch_data_defult);
+document.getElementById('kiko_goat').addEventListener('click', fetch_data_kiko);
+document.getElementById('pygora_goat').addEventListener('click', fetch_data_pygora);
+document.getElementById('angora_goat').addEventListener('click', fetch_data_angora);
+document.getElementById('pygmy_goat').addEventListener('click', fetch_data_pygmy);
 
 document.getElementById('form_select').addEventListener('change', form_selected);
 
@@ -12,57 +13,65 @@ let species = ""
 let form_selection = "biology"
 let current_img = 0
 
-function fetchData_pygora() {
-    species = 'pygora_goat';
+function fetch_data_defult() {
+    species = 'defult_goat';
     current_img = 1;
-    updatePage();
-    updateImg();
+    update_page();
+    update_img();
     form_selected();
 }
 
-function fetchData_kiko() {
+function fetch_data_kiko() {
     species = 'kiko_goat';
     current_img = 1;
-    updatePage();
-    updateImg();
+    update_page();
+    update_img();
     form_selected();
 }
 
-function fetchData_angora() {
+function fetch_data_pygora() {
+    species = 'pygora_goat';
+    current_img = 1;
+    update_page();
+    update_img();
+    form_selected();
+}
+
+function fetch_data_angora() {
     species = 'angora_goat';
     current_img = 1;
-    updatePage();
-    updateImg();
+    update_page();
+    update_img();
     form_selected();
 }
 
-function fetchData_pygmy() {
+function fetch_data_pygmy() {
     species = 'pygmy_goat';
     current_img = 1;
-    updatePage();
-    updateImg();
+    update_page();
+    update_img();
     form_selected();
 }
 
 function form_selected() {
     form_selection = document.getElementById('form_select').value;
     console.log('Form Selection Updated:', form_selection);
-    updatePage();
+    update_page();
 }
 
 function change_img_left() {
     current_img = (current_img + 3) % 4;
     console.log(current_img);
-    updateImg();
+    update_img();
 }
 
 function change_img_right() {
     current_img = (current_img + 1) % 4;
     console.log(current_img);
-    updateImg();
+    update_img();
 }
 
-function updatePage() {
+function update_page() {
     fetch(`http://127.0.0.1:8080/${species}`)
         .then(response => response.text())
         .then(data => {
@@ -82,7 +91,7 @@ function updatePage() {
         });
 }
 
-function updateImg() {
+function update_img() {
     fetch(`http://127.0.0.1:8080/${species}/image/${current_img}`)
     .then(response => response.text())
     .then(data => {
