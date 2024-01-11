@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', fetch_data_default);
 
 document.getElementById('navbar_icon').addEventListener('click', fetch_data_default);
-document.getElementById('kiko_goat').addEventListener('click', fetch_data_kiko);
-document.getElementById('pygora_goat').addEventListener('click', fetch_data_pygora);
-document.getElementById('angora_goat').addEventListener('click', fetch_data_angora);
-document.getElementById('pygmy_goat').addEventListener('click', fetch_data_pygmy);
+document.getElementById('kiko_goat').addEventListener('click', () => fetch_goat_data('kiko_goat'));
+document.getElementById('pygora_goat').addEventListener('click', () => fetch_goat_data('pygora_goat'));
+document.getElementById('angora_goat').addEventListener('click', () => fetch_goat_data('angora_goat'));
+document.getElementById('pygmy_goat').addEventListener('click', () => fetch_goat_data('pygmy_goat'));
 
 document.getElementById('form_select').addEventListener('change', form_selected);
 
@@ -16,7 +16,7 @@ let species = ""
 let form_selection = "biology"
 let current_img = 0
 
-function generic_fetch_data(species_value) {
+function fetch_goat_data(species_value) {
     species = species_value;
     current_img = 1;
     update_page();
@@ -25,27 +25,11 @@ function generic_fetch_data(species_value) {
 }
 
 function fetch_data_default() {
-    generic_fetch_data('defult_goat');
+    fetch_goat_data('defult_goat');
     let nav_item = document.querySelectorAll('.nav-link');
     for (let i = 0; i < nav_item.length; i++) {
         nav_item[i].classList.remove('active');
     }
-}
-
-function fetch_data_kiko() {
-    generic_fetch_data('kiko_goat');
-}
-
-function fetch_data_pygora() {
-    generic_fetch_data('pygora_goat');
-}
-
-function fetch_data_angora() {
-    generic_fetch_data('angora_goat');
-}
-
-function fetch_data_pygmy() {
-    generic_fetch_data('pygmy_goat');
 }
 
 function form_selected() {
