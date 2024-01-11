@@ -10,8 +10,8 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-const json_file = 'data/data.json';
-const data = JSON.parse(fs.readFileSync(json_file));
+const goat_data_file = 'data/goat_data.json';
+const data = JSON.parse(fs.readFileSync(goat_data_file));
 
 app.get('/:species', (req, resp) => {
     const species = req.params.species;
@@ -63,8 +63,19 @@ app.get('/:species/image/:current_img', (req, resp) => {
     const species = req.params.species;
     const current_img = req.params.current_img;
     const goatEntry = data.find(entry => entry.species.includes(species));
-    if (goatEntry) {
+    if (goatEntry) { 
         resp.send(`<img src="assets/images/${species}/${parseInt(current_img) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(current_img) + 1}">`);
+    } else {
+        resp.status(404).send('Loading error, try again');
+        console.log('loading error');
+    }
+});
+
+app.get('/:species/comment', (req, resp) => {
+    const species = req.params.species;
+    const goatEntry = data.find(entry => entry.species.includes(species));
+    if (goatEntry) {
+        resp.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form`);
     } else {
         resp.status(404).send('Loading error, try again');
         console.log('loading error');

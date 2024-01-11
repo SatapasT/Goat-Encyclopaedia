@@ -68,6 +68,15 @@ function update_page() {
         .catch(error => {
             console.error('Error fetching data:', error);
         });
+
+        fetch(`${local_host}/${species}/comment`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('comment_info_div').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
 }
 
 function update_img() {

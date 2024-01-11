@@ -1,12 +1,12 @@
 [
     {
         "species": ["defult_goat"],
-        "name": ["Goat!"],
+        "name": ["Goat"],
         "biology":["Chromosome number : 60",
-        "Body temperature (° C)  Young : 39–40.5",
-        "Body temperature (° C)  Adult : 38.5–39.5",
-        "Heart rate (beats/min) (° C)  Young : 140 (120–160)",
-        "Heart rate (beats/min) (° C)  Adult : 85 (70–110)",
+        "Body temperature - Young : 39°C–40.5°C",
+        "Body temperature - Adult : 38.5°C–39.5°C",
+        "Heart rate (beats/min) - Young : 140 (120–160)",
+        "Heart rate (beats/min) - Adult : 85 (70–110)",
         "Respiration rate (breaths/min) Young : 50(40–65)",
         "Respiration rate (breaths/min) Adult : 28 (15–40)",
         "Life span (years) : 8–12",

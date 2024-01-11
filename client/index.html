@@ -71,7 +71,7 @@
         <div class="row">
           <div id="img_div"></div>
         </div>
-        <div class="row ">
+        <div class="row p-2 ">
           <div class="col">
             <button type="button" class="btn btn-secondary" id="img_left">
               < </button>
@@ -82,9 +82,33 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col bg-warning p-3 border-top border-dark border-start-0">
+        <div class="col">
+          <div id="comment_info_div"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row bg-warning p-3 border-top border-dark border-start-0">
+      <div class="row">
+        <div class="col-3">
+          <label for="name_input" class="form-label">Display Name</label>
+          <input type="text" class="form-control" id="name_input" placeholder="Username" aria-label="Username">
+        </div>
+        <div class="col-9">
+          <label for="comment_input" class="form-label">Leave a comment!</label>
+          <input type="text" class="form-control" id="comment_input" placeholder="What are your thoughts?" aria-label="Username">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 p-2">
+          <button type="submit" class="btn btn-secondary">Submit</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  
+
 </body>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha384-u4T9wYeKQkAAQUN1TtND1zXPRV1nS5uU+IhVnNPqJQDBCGI+qS9STPI2by6Hfoa9" crossorigin="anonymous"></script>
   <script src="script.js"></script>
