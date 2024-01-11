@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 
+
 app.use(express.static('client'));
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -25,7 +26,7 @@ app.get('/:species', (req, resp) => {
     }
 });
 
-app.get('/:species/:value', (req, resp) => {
+app.get('/:species/information/:value', (req, resp) => {
     const species = req.params.species;
     const form_value = req.params.value;
     const goatEntry = data.find(entry => entry.species.includes(species));

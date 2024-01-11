@@ -1,4 +1,6 @@
-document.getElementById('navbar_icon').addEventListener('click', fetch_data_defult);
+document.addEventListener('DOMContentLoaded', fetch_data_default);
+
+document.getElementById('navbar_icon').addEventListener('click', fetch_data_default);
 document.getElementById('kiko_goat').addEventListener('click', fetch_data_kiko);
 document.getElementById('pygora_goat').addEventListener('click', fetch_data_pygora);
 document.getElementById('angora_goat').addEventListener('click', fetch_data_angora);
@@ -9,48 +11,41 @@ document.getElementById('form_select').addEventListener('change', form_selected)
 document.getElementById('img_left').addEventListener('click', change_img_left);
 document.getElementById('img_right').addEventListener('click', change_img_right);
 
+const local_host = 'http://127.0.0.1:8080';
 let species = ""
 let form_selection = "biology"
 let current_img = 0
 
-function fetch_data_defult() {
-    species = 'defult_goat';
+function generic_fetch_data(species_value) {
+    species = species_value;
     current_img = 1;
     update_page();
     update_img();
     form_selected();
+}
+
+function fetch_data_default() {
+    generic_fetch_data('defult_goat');
+    let nav_item = document.querySelectorAll('.nav-link');
+    for (let i = 0; i < nav_item.length; i++) {
+        nav_item[i].classList.remove('active');
+    }
 }
 
 function fetch_data_kiko() {
-    species = 'kiko_goat';
-    current_img = 1;
-    update_page();
-    update_img();
-    form_selected();
+    generic_fetch_data('kiko_goat');
 }
 
 function fetch_data_pygora() {
-    species = 'pygora_goat';
-    current_img = 1;
-    update_page();
-    update_img();
-    form_selected();
+    generic_fetch_data('pygora_goat');
 }
 
 function fetch_data_angora() {
-    species = 'angora_goat';
-    current_img = 1;
-    update_page();
-    update_img();
-    form_selected();
+    generic_fetch_data('angora_goat');
 }
 
 function fetch_data_pygmy() {
-    species = 'pygmy_goat';
-    current_img = 1;
-    update_page();
-    update_img();
-    form_selected();
+    generic_fetch_data('pygmy_goat');
 }
 
 function form_selected() {
@@ -72,7 +67,7 @@ function change_img_right() {
 }
 
 function update_page() {
-    fetch(`http://127.0.0.1:8080/${species}`)
+    fetch(`${local_host}/${species}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('display_center').innerHTML = data;
@@ -81,7 +76,7 @@ function update_page() {
             console.error('Error fetching data:', error);
         });
 
-        fetch(`http://127.0.0.1:8080/${species}/${form_selection}`)
+        fetch(`${local_host}/${species}/information/${form_selection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('information_div').innerHTML = data;
@@ -92,7 +87,7 @@ function update_page() {
 }
 
 function update_img() {
-    fetch(`http://127.0.0.1:8080/${species}/image/${current_img}`)
+    fetch(`${local_host}/${species}/image/${current_img}`)
     .then(response => response.text())
     .then(data => {
         document.getElementById('img_div').innerHTML = data;
