@@ -11,13 +11,15 @@ document.getElementById('form_select').addEventListener('change', form_selected)
 document.getElementById('img_left').addEventListener('click', change_img_left);
 document.getElementById('img_right').addEventListener('click', change_img_right);
 
+document.getElementById('comment_submit').addEventListener('click', submit_comment);
+
 const local_host = 'http://127.0.0.1:8080';
-let species = ""
-let form_selection = "biology"
-let current_img = 0
+let current_species;
+let form_selection = "biology";
+let current_img = 0;
 
 function fetch_goat_data(species_value) {
-    species = species_value;
+    current_species = species_value;
     current_img = 1;
     update_page();
     update_img();
@@ -50,8 +52,53 @@ function change_img_right() {
     update_img();
 }
 
+function submit_comment() {
+    const current_date = new Date();
+    let date_data = get_date(current_date);
+    let time_data = get_time(current_date);
+    let comment_data = document.getElementById("comment_input").value;
+    let name_data = document.getElementById("name_input").value;
+    
+    if (comment_data === "") {
+        document.getElementById("comment_label").innerHTML = "<strong>You can't submit a empty comment!</strong>";
+        return;
+    } else {
+        document.getElementById("comment_label").innerHTML = "Leave a comment!";
+    }
+    if (name_data === "") {
+        name_data = "Anonymous"
+    }
+    
+    let data = {
+        species: current_species,
+        name: name_data,
+        comment: comment_data,
+        date: date_data,
+        time: time_data
+    }
+
+    console.log(data);
+
+    document.getElementById("comment_input").value = "";
+    document.getElementById("name_input").value = "";
+}
+
+function get_date(current_date){
+    let year = current_date.getFullYear();
+    let month = current_date.getMonth() + 1;
+    let day = current_date.getDate();
+    return `${day}/${month}/${year}`;
+}
+
+function get_time(current_date){
+    let hour = current_date.getHours();
+    let minute = current_date.getMinutes() + 1;
+    let second = current_date.getSeconds();
+    return `${hour}:${minute}:${second}`;
+}
+
 function update_page() {
-    fetch(`${local_host}/${species}`)
+    fetch(`${local_host}/${current_species}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('display_center').innerHTML = data;
@@ -60,7 +107,7 @@ function update_page() {
             console.error('Error fetching data:', error);
         });
 
-        fetch(`${local_host}/${species}/information/${form_selection}`)
+        fetch(`${local_host}/${current_species}/information/${form_selection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('information_div').innerHTML = data;
@@ -69,7 +116,7 @@ function update_page() {
             console.error('Error fetching data:', error);
         });
 
-        fetch(`${local_host}/${species}/comment`)
+        fetch(`${local_host}/${current_species}/form_info`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment_info_div').innerHTML = data;
@@ -80,7 +127,7 @@ function update_page() {
 }
 
 function update_img() {
-    fetch(`${local_host}/${species}/image/${current_img}`)
+    fetch(`${local_host}/${current_species}/image/${current_img}`)
     .then(response => response.text())
     .then(data => {
         document.getElementById('img_div').innerHTML = data;
