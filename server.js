@@ -11,12 +11,15 @@ app.use((request, response, next) => {
 });
 
 app.use(express.json());
-const goat_data_file = 'data/goat_data.json';
-const data = JSON.parse(fs.readFileSync(goat_data_file));
+const goat_data_path = 'data/goat_data.json';
+const goat_data = JSON.parse(fs.readFileSync(goat_data_path));
+const thread_data_path = 'data/comment_data.json';
+const thread_data = JSON.parse(fs.readFileSync(thread_data_path));
+
 
 app.get('/:current_species', (request, response) => {
     const species = request.params.current_species;
-    const goatEntry = data.find(entry => entry.species.includes(species));
+    const goatEntry = goat_data.find(entry => entry.species.includes(species));
     if (goatEntry) {
         response.send(`<strong> > ${goatEntry["name"].toString()} < </strong>`);
     } else {
@@ -28,7 +31,7 @@ app.get('/:current_species', (request, response) => {
 app.get('/:current_species/information/:value', (request, response) => {
     const species = request.params.current_species;
     const form_value = request.params.value;
-    const goat_entry = data.find(entry => entry.species.includes(species));
+    const goat_entry = goat_data.find(entry => entry.species.includes(species));
     const item_colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"};
     const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
     if (goat_entry && form_value == "pro_con"){
@@ -62,7 +65,7 @@ app.get('/:current_species/information/:value', (request, response) => {
 app.get('/:current_species/image/:current_img', (request, response) => {
     const species = request.params.current_species;
     const current_img = request.params.current_img;
-    const goat_entry = data.find(entry => entry.species.includes(species));
+    const goat_entry = goat_data.find(entry => entry.species.includes(species));
     if (goat_entry) { 
         response.send(`<img src="assets/images/${species}/${parseInt(current_img) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(current_img) + 1}">`);
     } else {
@@ -73,7 +76,7 @@ app.get('/:current_species/image/:current_img', (request, response) => {
 
 app.get('/:current_species/form_info', (request, response) => {
     const species = request.params.current_species;
-    const goatEntry = data.find(entry => entry.species.includes(species));
+    const goatEntry = goat_data.find(entry => entry.species.includes(species));
     if (goatEntry) {
         response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form`);
     } else {
@@ -83,10 +86,11 @@ app.get('/:current_species/form_info', (request, response) => {
 });
 
 app.post('/:species/comment_data', (request, response) => {
-    console.log("hello", request.body);
     let comment_data = request.body;
-    console.log(comment_data)
-    response.send("WE SO WORKING")
+    console.log(comment_data);
+    response.send("WE SO WORKING");
+    thread_data.push(comment_data)
+    fs.writeFileSync(thread_data_path, JSON.stringify(thread_data));
 });
 
 const server = app.listen(8080, () => {
