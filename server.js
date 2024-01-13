@@ -13,7 +13,7 @@ app.use((request, response, next) => {
 app.use(express.json());
 const goat_data_path = 'data/goat_data.json';
 const goat_data = JSON.parse(fs.readFileSync(goat_data_path));
-const thread_data_path = 'data/comment_data.json';
+const thread_data_path = 'data/thread_data.json';
 const thread_data = JSON.parse(fs.readFileSync(thread_data_path));
 
 
@@ -76,9 +76,9 @@ app.get('/:current_species/image/:current_img', (request, response) => {
 
 app.get('/:current_species/form_info', (request, response) => {
     const species = request.params.current_species;
-    const goatEntry = goat_data.find(entry => entry.species.includes(species));
-    if (goatEntry) {
-        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form`);
+    const goat_entry = goat_data.find(entry => entry.species.includes(species));
+    if (goat_entry) {
+        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goat_entry["name"].toString()}</b> form`);
     } else {
         response.status(404).send('Loading error, try again');
         console.log('loading error');
@@ -91,7 +91,20 @@ app.post('/:species/comment_data', (request, response) => {
     response.send("WE SO WORKING");
     thread_data.push(comment_data)
     fs.writeFileSync(thread_data_path, JSON.stringify(thread_data));
+    response.send()
 });
+
+app.get('/:current_species/comment_thread', (request, response) => {
+    const species = request.params.current_species;
+    const comment_entry = thread_data.find(entry => entry.species.includes(species));
+    if (comment_entry === "") {
+        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form`);
+    } else {
+        response.status(404).send('Loading error, try again');
+        console.log('loading error');
+    }
+});
+
 
 const server = app.listen(8080, () => {
     console.log(`Server is running on port ${server.address().port}`);
