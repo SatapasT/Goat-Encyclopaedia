@@ -52,10 +52,10 @@ function change_img_right() {
     update_img();
 }
 
-function submit_comment() {
+async function submit_comment() {
     const current_date = new Date();
-    let date_data = get_date(current_date);
-    let time_data = get_time(current_date);
+    let date_data = await get_date(current_date);
+    let time_data = await get_time(current_date);
     let comment_data = document.getElementById("comment_input").value;
     let name_data = document.getElementById("name_input").value;
     
@@ -68,7 +68,6 @@ function submit_comment() {
     if (name_data === "") {
         name_data = "Anonymous"
     }
-    
     let data = {
         species: current_species,
         name: name_data,
@@ -76,8 +75,15 @@ function submit_comment() {
         date: date_data,
         time: time_data
     }
-
+    data = JSON.stringify(data)
     console.log(data);
+    const response = await fetch(`${local_host}/${current_species}/comment_data`, {
+        method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: data
+    });
 
     document.getElementById("comment_input").value = "";
     document.getElementById("name_input").value = "";
@@ -97,8 +103,8 @@ function get_time(current_date){
     return `${hour}:${minute}:${second}`;
 }
 
-function update_page() {
-    fetch(`${local_host}/${current_species}`)
+async function update_page() {
+    await fetch(`${local_host}/${current_species}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('display_center').innerHTML = data;
@@ -107,7 +113,7 @@ function update_page() {
             console.error('Error fetching data:', error);
         });
 
-        fetch(`${local_host}/${current_species}/information/${form_selection}`)
+    await fetch(`${local_host}/${current_species}/information/${form_selection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('information_div').innerHTML = data;
@@ -116,7 +122,7 @@ function update_page() {
             console.error('Error fetching data:', error);
         });
 
-        fetch(`${local_host}/${current_species}/form_info`)
+    await fetch(`${local_host}/${current_species}/form_info`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment_info_div').innerHTML = data;
@@ -126,8 +132,8 @@ function update_page() {
         });
 }
 
-function update_img() {
-    fetch(`${local_host}/${current_species}/image/${current_img}`)
+async function update_img() {
+    await fetch(`${local_host}/${current_species}/image/${current_img}`)
     .then(response => response.text())
     .then(data => {
         document.getElementById('img_div').innerHTML = data;
