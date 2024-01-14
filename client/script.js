@@ -16,7 +16,7 @@ document.getElementById('comment_submit').addEventListener('click', submit_comme
 const local_host = 'http://127.0.0.1:8080';
 let current_species;
 let form_selection = "biology";
-let current_img = 0;
+let current_img;
 
 function fetch_goat_data(species_value) {
     current_species = species_value;
@@ -93,6 +93,15 @@ async function update_page() {
         .catch(error => {
             console.error('Error fetching data:', error);
         });
+    
+    await fetch(`${local_host}/${current_species}/comment_thread`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('comment_thread_div').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
 }
 
 async function update_img() {
@@ -122,6 +131,7 @@ async function submit_comment() {
     if (name_data === "") {
         name_data = "Anonymous"
     }
+
     let data = {
         species: current_species,
         name: name_data,
@@ -129,6 +139,7 @@ async function submit_comment() {
         date: date_data,
         time: time_data
     }
+
     data = JSON.stringify(data)
     console.log(data);
     const response = await fetch(`${local_host}/${current_species}/comment_data`, {

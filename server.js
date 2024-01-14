@@ -16,6 +16,8 @@ const goat_data = JSON.parse(fs.readFileSync(goat_data_path));
 const thread_data_path = 'data/thread_data.json';
 const thread_data = JSON.parse(fs.readFileSync(thread_data_path));
 
+const item_colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"};
+const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
 
 app.get('/:current_species', (request, response) => {
     const species = request.params.current_species;
@@ -32,8 +34,6 @@ app.get('/:current_species/information/:value', (request, response) => {
     const species = request.params.current_species;
     const form_value = request.params.value;
     const goat_entry = goat_data.find(entry => entry.species.includes(species));
-    const item_colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"};
-    const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
     if (goat_entry && form_value == "pro_con"){
         let list = [];
         let header_position = 0
@@ -78,7 +78,7 @@ app.get('/:current_species/form_info', (request, response) => {
     const species = request.params.current_species;
     const goat_entry = goat_data.find(entry => entry.species.includes(species));
     if (goat_entry) {
-        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goat_entry["name"].toString()}</b> form`);
+        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goat_entry["name"].toString()}</b> form</p>`);
     } else {
         response.status(404).send('Loading error, try again');
         console.log('loading error');
@@ -88,7 +88,7 @@ app.get('/:current_species/form_info', (request, response) => {
 app.post('/:species/comment_data', (request, response) => {
     let comment_data = request.body;
     console.log(comment_data);
-    response.send("WE SO WORKING");
+    response.send("Successfully posted");
     thread_data.push(comment_data)
     fs.writeFileSync(thread_data_path, JSON.stringify(thread_data));
     response.send()
@@ -96,9 +96,26 @@ app.post('/:species/comment_data', (request, response) => {
 
 app.get('/:current_species/comment_thread', (request, response) => {
     const species = request.params.current_species;
-    const comment_entry = thread_data.find(entry => entry.species.includes(species));
-    if (comment_entry === "") {
-        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form`);
+    const comment_entry = thread_data.filter(entry => entry.species.includes(species));
+    console.log(comment_entry);
+    if (comment_entry.length === 0) {
+        response.send(`<div class="row"><div class="col ${pro_con_colour_dict[1]} fs-4"><strong>No one commented yet, be the first to do so!</strong></div></div>`);
+    } else if (comment_entry){
+        let list = []
+        console.log("hello", comment_entry.length);
+        for (let i = 0; i < comment_entry.length; i++) {
+            list.push(`<div class="row">`)
+            list.push(`<div class="col-2">`)
+            list.push(`<label for="comment_${i}" class="form-label">${comment_entry[i]["date"]} at ${comment_entry[i]["time"]}</label>`);
+            list.push(`<div id="comment_${i}">${comment_entry[i]["name"]}</div>`);
+            list.push(`</div>`)
+            list.push(`<div class="col-8">`)
+            list.push(`${comment_entry[i]["comment"]}`);
+            list.push(`</div>`)
+            list.push(`</div>`)
+        }
+        console.log(list.join(''));
+        response.send(list.join(''));
     } else {
         response.status(404).send('Loading error, try again');
         console.log('loading error');
