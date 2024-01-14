@@ -1,20 +1,33 @@
 body {
-    background-color: #4cff497e!important;
+    background-color: #4cff497e;
+    height: 100%;
+    margin: 0;
+}
+
+.background_image {
+    background-image: url("assets/images/barn_wall.jpg");
+    filter: blur(4px);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-position: center;
+    background-size: cover;
+    z-index: 0;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
 }
 
 #img_div {
-    height: 40vh;
+    height: 50vh;
+    width: auto;
     overflow: hidden;
     display: flex;
     align-items: center;
-}
-
-#img_div img {
-    max-height: 100%;
-    width: auto;
-    display: block; 
-    margin: 0 auto;
-    padding: 10px;
 }
 
 #information_div, #img_div {

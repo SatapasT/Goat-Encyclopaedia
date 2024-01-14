@@ -123,13 +123,18 @@ async function submit_comment() {
     let name_data = document.getElementById("name_input").value;
     
     if (comment_data === "") {
-        document.getElementById("comment_label").innerHTML = "<strong>You can't submit a empty comment!</strong>";
+        document.getElementById("comment_warning_div").innerHTML = "<strong>You Can't Submit A Empty Comment!</strong>";
         return;
     } else {
-        document.getElementById("comment_label").innerHTML = "Leave a comment!";
+        document.getElementById("comment_warning_div").innerHTML = "";
     }
     if (name_data === "") {
         name_data = "Anonymous"
+    } else if (name_data.length > 10) {
+        document.getElementById("comment_warning_div").innerHTML = "<strong>10 Character Limit For Username</strong>";
+        return;
+    } else {
+        document.getElementById("comment_warning_div").innerHTML = "";
     }
 
     let data = {
@@ -152,4 +157,12 @@ async function submit_comment() {
         console.log(response)
     document.getElementById("comment_input").value = "";
     document.getElementById("name_input").value = "";
+    await fetch(`${local_host}/${current_species}/comment_thread`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('comment_thread_div').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
 }

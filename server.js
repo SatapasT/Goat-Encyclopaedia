@@ -97,23 +97,25 @@ app.post('/:species/comment_data', (request, response) => {
 app.get('/:current_species/comment_thread', (request, response) => {
     const species = request.params.current_species;
     const comment_entry = thread_data.filter(entry => entry.species.includes(species));
-    console.log(comment_entry);
     if (comment_entry.length === 0) {
-        response.send(`<div class="row"><div class="col ${item_colour_dict[1]} fs-4"><strong>No one commented yet, be the first to do so!</strong></div></div>`);
+        let list = []
+        list.push(`<div class="row mt-2 mb-2 border border-dark p-3 ${item_colour_dict[0]}">`)
+        list.push(`<div class="col">`)
+        list.push(`<div class="text-center"><strong>No one commented yet, be the first to do so!</div>`);
+        list.push(`</div></div>`)
+        response.send(list.join(''));
     } else if (comment_entry){
         let list = []
-        console.log("hello", comment_entry.length);
         for (let i = 0; i < comment_entry.length; i++) {
             list.push(`<div class="row mt-2 mb-2 border border-dark p-3 ${item_colour_dict[i%2]}">`)
             list.push(`<div class="col-4 border-end border-dark p-3">`)
             list.push(`<label for="name_${i}" class="form-label">${comment_entry[i]["date"]} at ${comment_entry[i]["time"]}</label>`);
-            list.push(`<div class="text-center" id="name_${i}">Form: ${comment_entry[i]["name"]}</div>`);
+            list.push(`<div class="text-center" id="name_${i}">From : ${comment_entry[i]["name"]}</div>`);
             list.push(`</div>`)
             list.push(`<div class="col-8 d-flex align-items-center justify-content-center">`)
             list.push(`<div class="text-center">${comment_entry[i]["comment"]}</div>`)
             list.push(`</div></div>`)
         }
-        console.log(list.join(''));
         response.send(list.join(''));
     } else {
         response.status(404).send('Loading error, try again');
