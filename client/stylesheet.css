@@ -4,7 +4,7 @@ body {
     margin: 0;
 }
 
-.background_image {
+.background-image {
     background-image: url("assets/images/barn_wall.jpg");
     filter: blur(4px);
     height: 100%;
@@ -22,7 +22,7 @@ body {
     z-index: 1;
 }
 
-#img_div {
+#img-div {
     height: 50vh;
     width: auto;
     overflow: hidden;
@@ -30,6 +30,10 @@ body {
     align-items: center;
 }
 
-#information_div, #img_div {
+#information-div, #img-div {
     padding: 5px;
+}
+
+.text-center {
+    overflow-y: scroll;
 }

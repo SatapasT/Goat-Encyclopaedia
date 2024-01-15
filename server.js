@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 
-
 app.use(express.static('client'));
 app.use((request, response, next) => {
     response.header('Access-Control-Allow-Origin', '*');
@@ -11,17 +10,17 @@ app.use((request, response, next) => {
 });
 
 app.use(express.json());
-const goat_data_path = 'data/goat_data.json';
-const goat_data = JSON.parse(fs.readFileSync(goat_data_path));
-const thread_data_path = 'data/thread_data.json';
-const thread_data = JSON.parse(fs.readFileSync(thread_data_path));
+const goatDataPath = 'data/goat_data.json';
+const goatData = JSON.parse(fs.readFileSync(goatDataPath));
+const threadDataPath = 'data/thread_data.json';
+const threadData = JSON.parse(fs.readFileSync(threadDataPath));
 
-const item_colour_dict = {0:"bg-light-subtle", 1:"bg-dark-subtle"};
-const pro_con_colour_dict = {1:"bg-success-subtle", 2:"bg-danger-subtle"};
+const itemColourDict = { 0: "bg-light-subtle", 1: "bg-dark-subtle" };
+const proConColourDict = { 1: "bg-success-subtle", 2: "bg-danger-subtle" };
 
 app.get('/:current_species', (request, response) => {
     const species = request.params.current_species;
-    const goatEntry = goat_data.find(entry => entry.species.includes(species));
+    const goatEntry = goatData.find(entry => entry.species.includes(species));
     if (goatEntry) {
         response.send(`<strong> > ${goatEntry["name"].toString()} < </strong>`);
     } else {
@@ -32,42 +31,50 @@ app.get('/:current_species', (request, response) => {
 
 app.get('/:current_species/information/:value', (request, response) => {
     const species = request.params.current_species;
-    const form_value = request.params.value;
-    const goat_entry = goat_data.find(entry => entry.species.includes(species));
-    if (goat_entry && form_value == "pro_con"){
+    const formValue = request.params.value;
+    const goatEntry = goatData.find(entry => entry.species.includes(species));
+
+    if (!goatEntry) {
+        response.status(404).send('Loading error, try again');
+        console.log('loading error');
+        return;
+    }
+
+    if (formValue == "pro_con" && goatEntry[formValue]) {
         let list = [];
-        let header_position = 0
-        let string_find = ["Pros","Cons"]
-        for (let i =0; i < goat_entry[form_value].length; i++) {
-            let entry = goat_entry[form_value][i]
-            if (entry.includes(string_find[header_position])){
-                header_position += 1
-                list.push(`<div class="row"><div class="col text-start ${pro_con_colour_dict[header_position]} border-bottom"><h2>${entry}</h2></div></div>`);
-                continue;
+        let headerPosition = 0;
+        let stringFind = ["Pros", "Cons"];
+        
+        for (let i = 0; i < goatEntry[formValue].length; i++) {
+            let entry = goatEntry[formValue][i];
+            
+            if (entry.includes(stringFind[headerPosition])) {
+                headerPosition += 1;
+                list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]} border-bottom"><h2>${entry}</h2></div></div>`);
+            } else {
+                list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]}">${entry}</div></div>`);
             }
-            list.push(`<div class="row"><div class="col text-start ${pro_con_colour_dict[header_position]}">${entry}</div></div>`);
         }
         response.send(list.join(''));
-    } else if (goat_entry) {
+    } else if (goatEntry[formValue]) {
         let list = [];
-        
-        for (let i =0; i < goat_entry[form_value].length; i++) {
-            let entry = goat_entry[form_value][i]
-            list.push(`<div class="row"><div class="col text-start fs-6 ${item_colour_dict[i%2]}">${entry}</div></div>`);
+        for (let i = 0; i < goatEntry[formValue].length; i++) {
+            let entry = goatEntry[formValue][i];
+            list.push(`<div class="row"><div class="col text-start fs-6 ${itemColourDict[i % 2]}">${entry}</div></div>`);
         }
         response.send(list.join(''));
     } else {
-        response.status(404).send('Loading error, try again');
-        console.log('loading error');
+        response.status(404).send('Invalid form value');
+        console.log('Invalid form value');
     }
 });
 
 app.get('/:current_species/image/:current_img', (request, response) => {
     const species = request.params.current_species;
-    const current_img = request.params.current_img;
-    const goat_entry = goat_data.find(entry => entry.species.includes(species));
-    if (goat_entry) { 
-        response.send(`<img src="assets/images/${species}/${parseInt(current_img) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(current_img) + 1}">`);
+    const currentImg = request.params.current_img;
+    const goatEntry = goatData.find(entry => entry.species.includes(species));
+    if (goatEntry) {
+        response.send(`<img src="assets/images/${species}/${parseInt(currentImg) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(currentImg) + 1}">`);
     } else {
         response.status(404).send('Loading error, try again');
         console.log('loading error');
@@ -76,9 +83,9 @@ app.get('/:current_species/image/:current_img', (request, response) => {
 
 app.get('/:current_species/form_info', (request, response) => {
     const species = request.params.current_species;
-    const goat_entry = goat_data.find(entry => entry.species.includes(species));
-    if (goat_entry) {
-        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goat_entry["name"].toString()}</b> form</p>`);
+    const goatEntry = goatData.find(entry => entry.species.includes(species));
+    if (goatEntry) {
+        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form</p>`);
     } else {
         response.status(404).send('Loading error, try again');
         console.log('loading error');
@@ -86,35 +93,35 @@ app.get('/:current_species/form_info', (request, response) => {
 });
 
 app.post('/:species/comment_data', (request, response) => {
-    let comment_data = request.body;
-    console.log(comment_data);
+    let commentData = request.body;
+    console.log(commentData);
     response.send("Successfully posted");
-    thread_data.push(comment_data)
-    fs.writeFileSync(thread_data_path, JSON.stringify(thread_data));
-    response.send()
+    threadData.push(commentData);
+    fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
+    response.send();
 });
 
 app.get('/:current_species/comment_thread', (request, response) => {
     const species = request.params.current_species;
-    const comment_entry = thread_data.filter(entry => entry.species.includes(species));
-    if (comment_entry.length === 0) {
+    const commentEntry = threadData.filter(entry => entry.species.includes(species));
+    if (commentEntry.length === 0) {
         let list = []
-        list.push(`<div class="row mt-2 mb-2 border border-dark p-3 ${item_colour_dict[0]}">`)
+        list.push(`<div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[0]}">`)
         list.push(`<div class="col">`)
         list.push(`<div class="text-center"><strong>No one commented yet, be the first to do so!</div>`);
         list.push(`</div></div>`)
         response.send(list.join(''));
-    } else if (comment_entry){
+    } else if (commentEntry) {
         let list = []
-        for (let i = 0; i < comment_entry.length; i++) {
-            list.push(`<div class="row mt-2 mb-2 border border-dark p-3 ${item_colour_dict[i%2]}">`)
+        for (let i = 0; i < commentEntry.length; i++) {
+            list.push(`<div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">`)
             list.push(`<div class="col-4 border-end border-dark p-3">`)
-            list.push(`<label for="name_${i}" class="form-label">${comment_entry[i]["date"]} at ${comment_entry[i]["time"]}</label>`);
-            list.push(`<div class="text-center" id="name_${i}">From : ${comment_entry[i]["name"]}</div>`);
+            list.push(`<label for="name_${i}" class="form-label">${commentEntry[i]["date"]} at ${commentEntry[i]["time"]}</label>`);
+            list.push(`<div class="text-center" id="name_${i}">From : ${commentEntry[i]["name"]}</div>`);
             list.push(`</div>`)
             list.push(`<div class="col-8 d-flex align-items-center justify-content-center">`)
-            list.push(`<div class="text-center">${comment_entry[i]["comment"]}</div>`)
-            list.push(`</div></div>`)
+            list.push(`<div class="text-center">${commentEntry[i]["comment"]}</div>`);
+            list.push(`</div></div>`);
         }
         response.send(list.join(''));
     } else {
@@ -122,7 +129,6 @@ app.get('/:current_species/comment_thread', (request, response) => {
         console.log('loading error');
     }
 });
-
 
 const server = app.listen(8080, () => {
     console.log(`Server is running on port ${server.address().port}`);
