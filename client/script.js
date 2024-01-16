@@ -17,6 +17,7 @@ const localhost = 'http://127.0.0.1:8080';
 let currentSpecies;
 let formSelection = 'biology';
 let currentImg;
+let user;
 
 function fetchGoatData(speciesValue) {
     currentSpecies = speciesValue;
@@ -36,19 +37,19 @@ function fetchDataDefault() {
 
 function formSelected() {
     formSelection = document.getElementById('form-select').value;
-    console.log('Form Selection Updated:', formSelection);
+    console.log(`Form Selection Updated: %{formSelection}`);
     updatePage();
 }
 
 function changeImgLeft() {
     currentImg = (currentImg + 3) % 4;
-    console.log(currentImg);
+    console.log(`Image Selection Updated: ${currentImg}`);
     updateImg();
 }
 
 function changeImgRight() {
     currentImg = (currentImg + 1) % 4;
-    console.log(currentImg);
+    console.log(`Image Selection Updated: ${currentImg}`);
     updateImg();
 }
 
@@ -98,6 +99,15 @@ async function updatePage() {
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment-thread-div').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+    
+    await fetch(`${localhost}/loginStatus/${user}`)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('login-div').innerHTML = data;
         })
         .catch(error => {
             console.error('Error fetching data:', error);

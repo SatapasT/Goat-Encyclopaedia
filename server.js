@@ -1,5 +1,5 @@
 const express = require('express');
-const app = express();
+const app = express(); 
 const fs = require('fs');
 
 app.use(express.static('client'));
@@ -11,9 +11,12 @@ app.use((request, response, next) => {
 
 app.use(express.json());
 const goatDataPath = 'data/goat_data.json';
-const goatData = JSON.parse(fs.readFileSync(goatDataPath));
 const threadDataPath = 'data/thread_data.json';
+const userDataPath = 'data/thread_data.json';
+const goatData = JSON.parse(fs.readFileSync(goatDataPath));
 const threadData = JSON.parse(fs.readFileSync(threadDataPath));
+const userData = JSON.parse(fs.readFileSync(userDataPath));
+
 
 const itemColourDict = { 0: "bg-light-subtle", 1: "bg-dark-subtle" };
 const proConColourDict = { 1: "bg-success-subtle", 2: "bg-danger-subtle" };
@@ -34,9 +37,9 @@ app.get('/:currentSpecies/information/:value', (request, response) => {
     const formValue = request.params.value;
     const goatEntry = goatData.find(entry => entry.species.includes(species));
     if (goatEntry && formValue == "pro_con") {
+        const stringFind = ["Pros", "Cons"];
         let list = [];
         let headerPosition = 0;
-        let stringFind = ["Pros", "Cons"];
         for (let i = 0; i < goatEntry[formValue].length; i++) {
             let entry = goatEntry[formValue][i];
             if (entry.includes(stringFind[headerPosition])) {
@@ -47,14 +50,15 @@ app.get('/:currentSpecies/information/:value', (request, response) => {
             list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]}">${entry}</div></div>`);
         }
         response.send(list.join(''));
+
     } else if (goatEntry) {
         let list = [];
-
         for (let i = 0; i < goatEntry[formValue].length; i++) {
             let entry = goatEntry[formValue][i];
             list.push(`<div class="row"><div class="col text-start fs-6 ${itemColourDict[i % 2]}">${entry}</div></div>`);
         }
         response.send(list.join(''));
+
     } else {
         response.status(404).send('Loading error, try again');
         console.log('loading error');
@@ -65,10 +69,11 @@ app.get('/:currentSpecies/image/:currentImg', (request, response) => {
     const species = request.params.currentSpecies;
     const currentImg = request.params.currentImg;
     const goatEntry = goatData.find(entry => entry.species.includes(species));
+
     if (goatEntry) {
         response.send(`<img src="assets/images/${species}/${parseInt(currentImg) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(currentImg) + 1}">`);
     } else {
-        response.status(404).send('Loading error, try again');
+        response.status(404).send(`Loading error : ${error}}`);
         console.log('loading error');
     }
 });
@@ -76,6 +81,7 @@ app.get('/:currentSpecies/image/:currentImg', (request, response) => {
 app.get('/:currentSpecies/formInfo', (request, response) => {
     const species = request.params.currentSpecies;
     const goatEntry = goatData.find(entry => entry.species.includes(species));
+
     if (goatEntry) {
         response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form</p>`);
     } else {
@@ -121,6 +127,18 @@ app.get('/:currentSpecies/commentThread', (request, response) => {
         console.log('loading error');
     }
 });
+
+app.get('/loginStatus/:user', (request, response) => {
+    const username = request.params.user;
+    const userEntry = userData.find(entry => entry.username.includes(username));
+    if (userEntry) {
+        response.send(`<button type="submit" id="login-button" class="btn btn-primary">Login</button>`);
+    } else {
+        response.send('<button type="submit" id="login-button" class="danger btn-danger">Logout</button>');
+        console.log('loading error');
+    }
+});
+
 
 const server = app.listen(8080, () => {
     console.log(`Server is running on port ${server.address().port}`);
