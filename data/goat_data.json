@@ -1,6 +1,6 @@
 [
     {
-        "species": ["defult_goat"],
+        "species": ["default_goat"],
         "name": ["Goat"],
         "biology":["Chromosome number : 60",
         "Body temperature - Young : 39°C–40.5°C",

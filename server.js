@@ -18,8 +18,8 @@ const threadData = JSON.parse(fs.readFileSync(threadDataPath));
 const itemColourDict = { 0: "bg-light-subtle", 1: "bg-dark-subtle" };
 const proConColourDict = { 1: "bg-success-subtle", 2: "bg-danger-subtle" };
 
-app.get('/:current_species', (request, response) => {
-    const species = request.params.current_species;
+app.get('/:currentSpecies', (request, response) => {
+    const species = request.params.currentSpecies;
     const goatEntry = goatData.find(entry => entry.species.includes(species));
     if (goatEntry) {
         response.send(`<strong> > ${goatEntry["name"].toString()} < </strong>`);
@@ -29,49 +29,41 @@ app.get('/:current_species', (request, response) => {
     }
 });
 
-app.get('/:current_species/information/:value', (request, response) => {
-    const species = request.params.current_species;
+app.get('/:currentSpecies/information/:value', (request, response) => {
+    const species = request.params.currentSpecies;
     const formValue = request.params.value;
     const goatEntry = goatData.find(entry => entry.species.includes(species));
-
-    if (!goatEntry) {
-        response.status(404).send('Loading error, try again');
-        console.log('loading error');
-        return;
-    }
-
-    if (formValue == "pro_con" && goatEntry[formValue]) {
+    if (goatEntry && formValue == "pro_con") {
         let list = [];
         let headerPosition = 0;
         let stringFind = ["Pros", "Cons"];
-        
         for (let i = 0; i < goatEntry[formValue].length; i++) {
             let entry = goatEntry[formValue][i];
-            
             if (entry.includes(stringFind[headerPosition])) {
                 headerPosition += 1;
                 list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]} border-bottom"><h2>${entry}</h2></div></div>`);
-            } else {
-                list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]}">${entry}</div></div>`);
+                continue;
             }
+            list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]}">${entry}</div></div>`);
         }
         response.send(list.join(''));
-    } else if (goatEntry[formValue]) {
+    } else if (goatEntry) {
         let list = [];
+
         for (let i = 0; i < goatEntry[formValue].length; i++) {
             let entry = goatEntry[formValue][i];
             list.push(`<div class="row"><div class="col text-start fs-6 ${itemColourDict[i % 2]}">${entry}</div></div>`);
         }
         response.send(list.join(''));
     } else {
-        response.status(404).send('Invalid form value');
-        console.log('Invalid form value');
+        response.status(404).send('Loading error, try again');
+        console.log('loading error');
     }
 });
 
-app.get('/:current_species/image/:current_img', (request, response) => {
-    const species = request.params.current_species;
-    const currentImg = request.params.current_img;
+app.get('/:currentSpecies/image/:currentImg', (request, response) => {
+    const species = request.params.currentSpecies;
+    const currentImg = request.params.currentImg;
     const goatEntry = goatData.find(entry => entry.species.includes(species));
     if (goatEntry) {
         response.send(`<img src="assets/images/${species}/${parseInt(currentImg) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(currentImg) + 1}">`);
@@ -81,8 +73,8 @@ app.get('/:current_species/image/:current_img', (request, response) => {
     }
 });
 
-app.get('/:current_species/form_info', (request, response) => {
-    const species = request.params.current_species;
+app.get('/:currentSpecies/formInfo', (request, response) => {
+    const species = request.params.currentSpecies;
     const goatEntry = goatData.find(entry => entry.species.includes(species));
     if (goatEntry) {
         response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form</p>`);
@@ -92,7 +84,7 @@ app.get('/:current_species/form_info', (request, response) => {
     }
 });
 
-app.post('/:species/comment_data', (request, response) => {
+app.post('/:currentSpecies/commentData', (request, response) => {
     let commentData = request.body;
     console.log(commentData);
     response.send("Successfully posted");
@@ -101,8 +93,8 @@ app.post('/:species/comment_data', (request, response) => {
     response.send();
 });
 
-app.get('/:current_species/comment_thread', (request, response) => {
-    const species = request.params.current_species;
+app.get('/:currentSpecies/commentThread', (request, response) => {
+    const species = request.params.currentSpecies;
     const commentEntry = threadData.filter(entry => entry.species.includes(species));
     if (commentEntry.length === 0) {
         let list = []
@@ -121,7 +113,7 @@ app.get('/:current_species/comment_thread', (request, response) => {
             list.push(`</div>`)
             list.push(`<div class="col-8 d-flex align-items-center justify-content-center">`)
             list.push(`<div class="text-center">${commentEntry[i]["comment"]}</div>`);
-            list.push(`</div></div>`);
+            list.push(`</div></div>`)
         }
         response.send(list.join(''));
     } else {

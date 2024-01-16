@@ -1,103 +1,118 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Goats of the World!</title>
   <link rel="stylesheet" href="stylesheet.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
+
 <body>
   <div class="background-image"></div>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border border-body">
-    <div class="container">
-      <a class="navbar-brand" id="navbar-icon" href="#">
-        <img src="/assets/images/goat_emoji.png" alt="Goat Emoji" width="30" height="24" class="d-inline-block align-text-top">
-        Goats of the World!
-      </a>
-      <ul class="nav nav-pills mb-3 ms-auto" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="kiko-goat" data-bs-toggle="pill" data-bs-target="#pills-kiko-goat" type="button" role="tab" aria-controls="pills-kiko-goat" aria-selected="false">Kiko Goat</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="pygora-goat" data-bs-toggle="pill" data-bs-target="#pills-pygora-goat" type="button" role="tab" aria-controls="pills-pygora-goat" aria-selected="false">Pygora Goat</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="angora-goat" data-bs-toggle="pill" data-bs-target="#pills-angora-goat" type="button" role="tab" aria-controls="pills-angora-goat" aria-selected="false">Angora Goat</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="pygmy-goat" data-bs-toggle="pill" data-bs-target="#pills-pygmy-goat" type="button" role="tab" aria-controls="pills-pygmy-goat" aria-selected="false">Pygmy Goat</button>
-        </li>
-      </ul>
-      <div class="tab-content" id="pills-tab-content">
-        <div class="tab-pane fade" id="pills-kiko-goat" role="tabpanel" aria-labelledby="kiko-goat" tabindex="0"></div>
-        <div class="tab-pane fade" id="pills-pygora-goat" role="tabpanel" aria-labelledby="pygora-goat" tabindex="0"></div>
-        <div class="tab-pane fade" id="pills-angora-goat" role="tabpanel" aria-labelledby="angora-goat" tabindex="0"></div>
-        <div class="tab-pane fade" id="pills-pygmy-goat" role="tabpanel" aria-labelledby="pygmy-goat" tabindex="0"></div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-body">
+      <div class="container align-items-start">
+          <a class="navbar-brand" id="navbar-icon" href="#">
+              <img src="/assets/images/goat_emoji.png" alt="Goat Emoji" width="30" height="24" class="d-inline-block align-text-top">
+              Goats of the World!
+          </a>
+          <ul class="nav nav-pills mb-3 ms-auto" id="pills-tab" role="tablist">
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="kiko-goat" data-bs-toggle="pill" data-bs-target="#pills-kiko-goat" type="button" role="tab" aria-controls="pills-kiko-goat" aria-selected="false">
+                      Kiko Goat
+                  </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="pygora-goat" data-bs-toggle="pill" data-bs-target="#pills-pygora-goat" type="button" role="tab" aria-controls="pills-pygora-goat" aria-selected="false">
+                      Pygora Goat
+                  </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="angora-goat" data-bs-toggle="pill" data-bs-target="#pills-angora-goat" type="button" role="tab" aria-controls="pills-angora-goat" aria-selected="false">
+                      Angora Goat
+                  </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="pygmy-goat" data-bs-toggle="pill" data-bs-target="#pills-pygmy-goat" type="button" role="tab" aria-controls="pills-pygmy-goat" aria-selected="false">
+                      Pygmy Goat
+                  </button>
+              </li>
+          </ul>
+          <div class="tab-content" id="pills-tab-content">
+              <div class="tab-pane fade" id="pills-kiko-goat" role="tabpanel" aria-labelledby="kiko-goat" tabindex="0"></div>
+              <div class="tab-pane fade" id="pills-pygora-goat" role="tabpanel" aria-labelledby="pygora-goat" tabindex="0"></div>
+              <div class="tab-pane fade" id="pills-angora-goat" role="tabpanel" aria-labelledby="angora-goat" tabindex="0"></div>
+              <div class="tab-pane fade" id="pills-pygmy-goat" role="tabpanel" aria-labelledby="pygmy-goat" tabindex="0"></div>
+          </div>
       </div>
-    </div>
   </nav>
-
   <div class="container text-center">
-    <div class="row">
-      <div class="col p-3 bg-primary border-bottom border-dark border-start-0">
-        <h1 class="display-1" id="display-center"><strong>Goat</strong></h1>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col bg-warning p-3 border-bottom border-dark border-start-0">
-        <select class="form-select" aria-label="Default select" id="form-select">
-          <option value="biology">Biology</option>
-          <option value="pro-con">Pros and Cons</option>
-          <option value="history">History</option>
-          <option value="faq">Frequently Asked Questions</option>
-        </select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-6 bg-warning border-end border-dark">
-        <div id="information-div"></div>
-      </div>
-      <div class="col-6 bg-warning">
-        <div class="row">
-          <div id="img-div"></div>
-        </div>
-        <div class="row p-2">
-          <div class="col">
-            <button type="button" class="btn btn-secondary" id="img-left">&lt;</button>
-          </div>
-          <div class="col">
-            <button type="button" class="btn btn-secondary" id="img-right">&gt;</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col bg-warning p-3 border-top border-dark border-start-0">
-        <div id="comment-info-div"></div>
-        <div id="comment-thread-div"></div>
-      </div> 
-    </div>
-    <div class="row bg-warning p-3 border-top border-dark border-start-0">
       <div class="row">
-        <div class="col-3">
-          <label for="name-input" id="name-label" class="form-label">Username</label>
-          <input type="text" class="form-control" id="name-input" aria-label="Username">
-        </div>
-        <div class="col-9">
-          <label for="comment-input" id="comment-label" class="form-label">Leave a comment!</label>
-          <input type="text" class="form-control" id="comment-input" placeholder="What are your thoughts?" aria-label="Username">
-        </div>
+          <div class="col p-3 bg-primary border-bottom border-dark border-start-0">
+              <h1 class="display-1 b" id="display-center"><strong>Goat</strong></h1>
+          </div>
       </div>
       <div class="row">
-        <div class="col-12 p-2">
-          <button type="submit" id="comment-submit" class="btn btn-secondary">Submit</button>
-          <div class="text-danger mt-3 rounded-5" id="comment-warning-div"></div>
-        </div>
+          <div class="col bg-warning p-3 border-bottom border-dark border-start-0">
+              <select class="form-select" aria-label="Default select" id="form-select">
+                  <option value="biology">Biology</option>
+                  <option value="pro-con">Pros and Cons</option>
+                  <option value="history">History</option>
+                  <option value="faq">Frequently Asked Questions</option>
+              </select>
+          </div>
       </div>
-    </div>
+      <div class="row">
+          <div class="col-6 bg-warning border-end border-dark">
+              <div id="information-div"></div>
+          </div>
+          <div class="col-6 bg-warning">
+              <div class="row">
+                  <div id="img-div"></div>
+              </div>
+              <div class="row p-2">
+                  <div class="col">
+                      <button type="button" class="btn btn-secondary" id="img-left">
+                          &lt;
+                      </button>
+                  </div>
+                  <div class="col">
+                      <button type="button" class="btn btn-secondary" id="img-right">
+                          &gt;
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col bg-warning p-3 border-top border-dark border-start-0">
+              <div id="comment-info-div"></div>
+              <div id="comment-thread-div"></div>
+          </div>
+      </div>
+      <div class="row bg-warning p-3 border-top border-dark border-start-0">
+          <div class="row">
+              <div class="col-3">
+                  <label for="name-input" id="name-label" class="form-label">Username</label>
+                  <input type="text" class="form-control" id="name-input" aria-label="Username">
+              </div>
+              <div class="col-9">
+                  <label for="comment-input" id="comment-label" class="form-label">Leave a comment!</label>
+                  <input type="text" class="form-control" id="comment-input" placeholder="What are your thoughts?" aria-label="Username">
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-12 p-2">
+                  <button type="submit" id="comment-submit" class="btn btn-secondary">Submit</button>
+                  <div class="text-bg-danger mt-3 rounded-5" id="comment-warning-div"></div>
+              </div>
+          </div>
+      </div>
   </div>
 </body>
+
+
   <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha384-u4T9wYeKQkAAQUN1TtND1zXPRV1nS5uU+IhVnNPqJQDBCGI+qS9STPI2by6Hfoa9" crossorigin="anonymous"></script>
   <script src="script.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
