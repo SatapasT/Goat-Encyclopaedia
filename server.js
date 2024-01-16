@@ -12,7 +12,7 @@ app.use((request, response, next) => {
 app.use(express.json());
 const goatDataPath = 'data/goat_data.json';
 const threadDataPath = 'data/thread_data.json';
-const userDataPath = 'data/thread_data.json';
+const userDataPath = 'data/user_data.json';
 const goatData = JSON.parse(fs.readFileSync(goatDataPath));
 const threadData = JSON.parse(fs.readFileSync(threadDataPath));
 const userData = JSON.parse(fs.readFileSync(userDataPath));
@@ -130,11 +130,12 @@ app.get('/:currentSpecies/commentThread', (request, response) => {
 
 app.get('/loginStatus/:user', (request, response) => {
     const username = request.params.user;
+    console.log()
     const userEntry = userData.find(entry => entry.username.includes(username));
     if (userEntry) {
         response.send(`<button type="submit" id="login-button" class="btn btn-primary">Login</button>`);
     } else {
-        response.send('<button type="submit" id="login-button" class="danger btn-danger">Logout</button>');
+        response.send('<button type="submit" id="login-button" class="btn btn-danger">Logout</button>');
         console.log('loading error');
     }
 });
