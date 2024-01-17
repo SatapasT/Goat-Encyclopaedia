@@ -1,7 +1,7 @@
 const localhost = 'http://127.0.0.1:8080';
 let currentSpecies;
 let formSelection = 'biology';
-let currentUser = "none";
+let currentUser = "Anonymous";
 
 function hideModal(id){
     let modalElement = document.getElementById(id);
@@ -30,7 +30,6 @@ function fetchGoatData(speciesValue) {
     updatePage();
     updateImg();
     formSelected();
-    updateNameDisplay();
 }
 
 function fetchDataDefault() {
@@ -54,6 +53,7 @@ function updatePage() {
     updateCommentInfo()
     updateCommentThread()
     updateImg()
+    updateNameDisplay()
 }
 
 async function updateTitle() {
@@ -116,7 +116,6 @@ async function submitComment() {
     const dateData = await formatDate(currentDate);
     const timeData = await formatTime(currentDate);
     const commentData = document.getElementById('comment-input').value;
-    let nameData = document.getElementById('name-input').value;
 
     if (commentData === '') {
         document.getElementById('comment-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">You can't leave a empty comment!</div>`;
@@ -124,17 +123,10 @@ async function submitComment() {
     } else {
         document.getElementById('comment-alert-div').innerHTML = '';
     }
-    if (nameData === '') {
-        nameData = 'Anonymous';
-    } else if (nameData.length > 10) {
-        document.getElementById('comment-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">10 Character Limit For Username!</div>`;
-        return;
-    } else {
-        document.getElementById('comment-alert-div').innerHTML = '';
-    }
+
     let data = {
         species: currentSpecies,
-        name: nameData,
+        name: currentUser,
         comment: commentData,
         date: dateData,
         time: timeData
@@ -151,20 +143,11 @@ async function submitComment() {
     });
     console.log(response);
     document.getElementById('comment-input').value = '';
-    document.getElementById('name-input').value = '';
     updateCommentThread()
 }
 
 async function signUpUser(){
-    const usernameData = document.getElementById('username-signup').value;
     const passwordData = document.getElementById('password-signup').value;
-
-    if (usernameData === ""){
-        document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
-        return;
-    } else {
-        document.getElementById('modal-signup-alert').innerHTML = ``;
-    }
 
     if (passwordData === ""){
         document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
@@ -174,7 +157,7 @@ async function signUpUser(){
     }
 
     let data = {
-        username: usernameData,
+        username: currentUser,
         password: passwordData,
     }
     data = JSON.stringify(data);
@@ -194,17 +177,13 @@ async function signUpUser(){
 
 
 function userLogout(){
-    currentUser = "none"
+    currentUser = "Anonymous"
     document.getElementById('login-button').style.display = 'block';
     document.getElementById('logout-button').style.display = 'none';
 }
 
 async function userLogin(){
 
-    if (currentUser != "none"){
-        currentUser = "none"
-        return
-    }
     const usernameData = document.getElementById('username-login').value;
     const passwordData = document.getElementById('password-login').value;
 
@@ -222,7 +201,6 @@ async function userLogin(){
         document.getElementById('modal-login-alert').innerHTML = ``;
     }
 
-    currentUser = usernameData;
     updatePage()
     await fetch(`${localhost}/loginStatus/information`)
         .then(response => response.text())
@@ -247,13 +225,18 @@ async function userLogin(){
         document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">Login Does Not To Any In The Database!</div>`;
         return
     }
+    
+    currentUser = usernameData;
+    console.log(usernameData,currentUser)
     document.getElementById('login-button').style.display = 'none';
     document.getElementById('logout-button').style.display = 'block';
     hideModal('login-modal')
+    updateNameDisplay()
 }
 
-async function updateNameDisplay() {
-    document.getElementById('comment-thread-div').innerHTML = currentUser;
+function updateNameDisplay() {
+    document.getElementById('name-div').innerHTML = currentUser;
+    console.log(currentUser);
 }
 
 document.addEventListener('DOMContentLoaded', fetchDataDefault);

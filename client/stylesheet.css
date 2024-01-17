@@ -61,7 +61,7 @@ body {
     padding: 5px;
 }
 
-.text-center {
+.text-center, #name-div {
     overflow-y: scroll;
 }
 
