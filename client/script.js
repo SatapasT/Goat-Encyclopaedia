@@ -8,20 +8,15 @@ document.getElementById('pygmy-goat').addEventListener('click', () => fetchGoatD
 
 document.getElementById('form-select').addEventListener('change', formSelected);
 
-document.getElementById('img-left').addEventListener('click', changeImgLeft);
-document.getElementById('img-right').addEventListener('click', changeImgRight);
-
 document.getElementById('comment-submit').addEventListener('click', submitComment);
 
 const localhost = 'http://127.0.0.1:8080';
 let currentSpecies;
 let formSelection = 'biology';
-let currentImg;
 let user;
 
 function fetchGoatData(speciesValue) {
     currentSpecies = speciesValue;
-    currentImg = 1;
     updatePage();
     updateImg();
     formSelected();
@@ -39,18 +34,6 @@ function formSelected() {
     formSelection = document.getElementById('form-select').value;
     console.log(`Form Selection Updated: %{formSelection}`);
     updatePage();
-}
-
-function changeImgLeft() {
-    currentImg = (currentImg + 3) % 4;
-    console.log(`Image Selection Updated: ${currentImg}`);
-    updateImg();
-}
-
-function changeImgRight() {
-    currentImg = (currentImg + 1) % 4;
-    console.log(`Image Selection Updated: ${currentImg}`);
-    updateImg();
 }
 
 function formatDate(currentDate) {
@@ -115,7 +98,7 @@ async function updatePage() {
 }
 
 async function updateImg() {
-    await fetch(`${localhost}/${currentSpecies}/image/${currentImg}`)
+    await fetch(`${localhost}/${currentSpecies}/image`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('img-div').innerHTML = data;

@@ -13,9 +13,12 @@ app.use(express.json());
 const goatDataPath = 'data/goat_data.json';
 const threadDataPath = 'data/thread_data.json';
 const userDataPath = 'data/user_data.json';
+const imageDataPath = 'data/image_data.json';
 const goatData = JSON.parse(fs.readFileSync(goatDataPath));
 const threadData = JSON.parse(fs.readFileSync(threadDataPath));
 const userData = JSON.parse(fs.readFileSync(userDataPath));
+const imageData = JSON.parse(fs.readFileSync(imageDataPath));
+
 
 
 const itemColourDict = { 0: "bg-light-subtle", 1: "bg-dark-subtle" };
@@ -65,16 +68,39 @@ app.get('/:currentSpecies/information/:value', (request, response) => {
     }
 });
 
-app.get('/:currentSpecies/image/:currentImg', (request, response) => {
+app.get('/:currentSpecies/image', (request, response) => {
     const species = request.params.currentSpecies;
-    const currentImg = request.params.currentImg;
-    const goatEntry = goatData.find(entry => entry.species.includes(species));
-
+    const goatEntry = imageData.find(entry => entry.species.includes(species));
+    console.log(goatEntry);
+    
     if (goatEntry) {
-        response.send(`<img src="assets/images/${species}/${parseInt(currentImg) + 1}.jpg" class="img-fluid" alt="${species} img ${parseInt(currentImg) + 1}">`);
+        let list = [];
+        list.push(`<div id="carouselItem" class="carousel slide">`);
+        list.push(`<div class="carousel-inner">`);
+
+        for (let i = 0; i < goatEntry["image"].length; i++) {
+            let activeClass = i === 0 ? ' active' : '';
+            list.push(`<div class="carousel-item${activeClass}">`);
+            list.push()
+            list.push(`<img src="assets/images/${species}/${goatEntry.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatEntry.image[i]}" />`);
+            list.push(`</div>`);
+        }
+
+        list.push(`</div>`);
+        list.push(`<button class="carousel-control-prev" type="button" data-bs-target="#carouselItem" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselItem" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+        </button>
+        </div>`);
+
+        response.send(list.join(''));
     } else {
-        response.status(404).send(`Loading error : ${error}}`);
-        console.log('loading error');
+        console.log(`Loading error for species: ${species}`);
+        response.status(404).send(`Loading error, try again`);
     }
 });
 

@@ -27,7 +27,6 @@ body {
     width: auto;
     overflow: hidden;
     display: flex;
-    align-items: center;
 }
 
 #information-div, #img-div {
