@@ -79,13 +79,17 @@ app.get('/:currentSpecies/image', (request, response) => {
         list.push(`<div class="carousel-inner">`);
 
         for (let i = 0; i < goatEntry["image"].length; i++) {
-            let activeClass = i === 0 ? ' active' : '';
+            let activeClass = i;
+            if (i === 0) {
+                activeClass = ` active`
+            } else {
+                activeClass = ``
+            }
             list.push(`<div class="carousel-item${activeClass}">`);
             list.push()
-            list.push(`<img src="assets/images/${species}/${goatEntry.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatEntry.image[i]}" />`);
+            list.push(`<img id="carousel-img"src="assets/images/${species}/${goatEntry.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatEntry.image[i]}" />`);
             list.push(`</div>`);
         }
-
         list.push(`</div>`);
         list.push(`<button class="carousel-control-prev" type="button" data-bs-target="#carouselItem" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
