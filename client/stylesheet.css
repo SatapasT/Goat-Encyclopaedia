@@ -1,5 +1,5 @@
 body {
-    background-color: #4cff497e;
+    background-color: #37d14485!important;
     height: 100%;
     margin: 0;
 }
@@ -63,4 +63,19 @@ body {
 
 .text-center {
     overflow-y: scroll;
+}
+
+.button-container {
+    position: relative;
+    width: max-content; 
+}
+
+#login-button, #logout-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#logout-button {
+    display: none;
 }

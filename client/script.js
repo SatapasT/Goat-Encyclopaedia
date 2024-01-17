@@ -1,42 +1,14 @@
-
-document.addEventListener('DOMContentLoaded', fetchDataDefault);
-
-document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
-document.getElementById('kiko-goat').addEventListener('click', () => fetchGoatData('kiko_goat'));
-document.getElementById('pygora-goat').addEventListener('click', () => fetchGoatData('pygora_goat'));
-document.getElementById('angora-goat').addEventListener('click', () => fetchGoatData('angora_goat'));
-document.getElementById('pygmy-goat').addEventListener('click', () => fetchGoatData('pygmy_goat'));
-
-document.getElementById('form-select').addEventListener('change', formSelected);
-
-document.getElementById('comment-submit').addEventListener('click', submitComment);
-
-document.getElementById('modal-signup-button').addEventListener('click', signUpUser);
-
 const localhost = 'http://127.0.0.1:8080';
 let currentSpecies;
 let formSelection = 'biology';
 let currentUser = "none";
 
-function fetchGoatData(speciesValue) {
-    currentSpecies = speciesValue;
-    updatePage();
-    updateImg();
-    formSelected();
-}
-
-function fetchDataDefault() {
-    fetchGoatData('default_goat');
-    const navItem = document.querySelectorAll('.nav-link');
-    for (let i = 0; i < navItem.length; i++) {
-        navItem[i].classList.remove('active');
-    }
-}
-
-function formSelected() {
-    formSelection = document.getElementById('form-select').value;
-    console.log(`Form Selection Updated: %{formSelection}`);
-    updatePage();
+function hideModal(id){
+    let modalElement = document.getElementById(id);
+    modalElement.classList.remove('show');
+    modalElement.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    document.querySelector('.modal-backdrop').remove();
 }
 
 function formatDate(currentDate) {
@@ -53,16 +25,49 @@ function formatTime(currentDate) {
     return `${hour}:${minute}:${second}`;
 }
 
-async function updatePage() {
-    await fetch(`${localhost}/${currentSpecies}`)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('display-center').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+function fetchGoatData(speciesValue) {
+    currentSpecies = speciesValue;
+    updatePage();
+    updateImg();
+    formSelected();
+    updateNameDisplay();
+}
 
+function fetchDataDefault() {
+    fetchGoatData('default_goat');
+    const navItem = document.querySelectorAll('.nav-link');
+    for (let i = 0; i < navItem.length; i++) {
+        navItem[i].classList.remove('active');
+    }
+}
+
+
+function formSelected() {
+    formSelection = document.getElementById('form-select').value;
+    console.log(`Form Selection Updated: %{formSelection}`);
+    updatePage();
+}
+
+function updatePage() {
+    updateTitle()
+    updateInformation()
+    updateCommentInfo()
+    updateCommentThread()
+    updateImg()
+}
+
+async function updateTitle() {
+    await fetch(`${localhost}/${currentSpecies}`)
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('display-center').innerHTML = data;
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
+}
+
+async function updateInformation() {
     await fetch(`${localhost}/${currentSpecies}/information/${formSelection}`)
         .then(response => response.text())
         .then(data => {
@@ -71,7 +76,9 @@ async function updatePage() {
         .catch(error => {
             console.error('Error fetching data:', error);
         });
+}
 
+async function updateCommentInfo() {
     await fetch(`${localhost}/${currentSpecies}/formInfo`)
         .then(response => response.text())
         .then(data => {
@@ -80,20 +87,13 @@ async function updatePage() {
         .catch(error => {
             console.error('Error fetching data:', error);
         });
+}
 
+async function updateCommentThread() {
     await fetch(`${localhost}/${currentSpecies}/commentThread`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment-thread-div').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-    
-    await fetch(`${localhost}/loginStatus/${currentUser}`)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('login-div').innerHTML = data;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -152,14 +152,7 @@ async function submitComment() {
     console.log(response);
     document.getElementById('comment-input').value = '';
     document.getElementById('name-input').value = '';
-    await fetch(`${localhost}/${currentSpecies}/commentThread`)
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('comment-thread-div').innerHTML = data;
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+    updateCommentThread()
 }
 
 async function signUpUser(){
@@ -167,17 +160,17 @@ async function signUpUser(){
     const passwordData = document.getElementById('password-signup').value;
 
     if (usernameData === ""){
-        document.getElementById('modal-username-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
+        document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
         return;
     } else {
-        document.getElementById('modal-username-alert').innerHTML = ``;
+        document.getElementById('modal-signup-alert').innerHTML = ``;
     }
 
     if (passwordData === ""){
-        document.getElementById('modal-username-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
+        document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
         return;
     } else {
-        document.getElementById('modal-username-alert').innerHTML = ``;
+        document.getElementById('modal-signup-alert').innerHTML = ``;
     }
 
     let data = {
@@ -199,10 +192,81 @@ async function signUpUser(){
     hideModal('signup-modal')
 }
 
-function hideModal(id){
-    let modalElement = document.getElementById(id);
-    modalElement.classList.remove('show');
-    modalElement.style.display = 'none';
-    document.body.classList.remove('modal-open');
-    document.querySelector('.modal-backdrop').remove();
+
+function userLogout(){
+    currentUser = "none"
+    document.getElementById('login-button').style.display = 'block';
+    document.getElementById('logout-button').style.display = 'none';
 }
+
+async function userLogin(){
+
+    if (currentUser != "none"){
+        currentUser = "none"
+        return
+    }
+    const usernameData = document.getElementById('username-login').value;
+    const passwordData = document.getElementById('password-login').value;
+
+    if (usernameData === ""){
+        document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
+        return;
+    } else {
+        document.getElementById('modal-login-alert').innerHTML = ``;
+    }
+
+    if (passwordData === ""){
+        document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
+        return;
+    } else {
+        document.getElementById('modal-login-alert').innerHTML = ``;
+    }
+
+    currentUser = usernameData;
+    updatePage()
+    await fetch(`${localhost}/loginStatus/information`)
+        .then(response => response.text())
+        .then(data => {
+            currentUser = JSON.parse(data);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+    console.log(currentUser)
+    const UserEntry = currentUser.find(entry => entry.username.includes(usernameData));
+    console.log(UserEntry)
+    if (UserEntry) {
+        if (UserEntry["password"] === passwordData) {
+            console.log("we working")
+        } else {
+            document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">Login Does Not To Any In The Database!</div>`;
+            return
+        }
+        
+    } else {
+        document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">Login Does Not To Any In The Database!</div>`;
+        return
+    }
+    document.getElementById('login-button').style.display = 'none';
+    document.getElementById('logout-button').style.display = 'block';
+    hideModal('login-modal')
+}
+
+async function updateNameDisplay() {
+    document.getElementById('comment-thread-div').innerHTML = currentUser;
+}
+
+document.addEventListener('DOMContentLoaded', fetchDataDefault);
+
+document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
+document.getElementById('kiko-goat').addEventListener('click', () => fetchGoatData('kiko_goat'));
+document.getElementById('pygora-goat').addEventListener('click', () => fetchGoatData('pygora_goat'));
+document.getElementById('angora-goat').addEventListener('click', () => fetchGoatData('angora_goat'));
+document.getElementById('pygmy-goat').addEventListener('click', () => fetchGoatData('pygmy_goat'));
+document.getElementById('form-select').addEventListener('change', formSelected);
+document.getElementById('comment-submit').addEventListener('click', submitComment);
+document.getElementById('modal-signup-button').addEventListener('click', signUpUser);
+document.getElementById('logout-button').addEventListener('click', userLogout);
+document.getElementById('modal-login-button').addEventListener('click', userLogin);
+
+

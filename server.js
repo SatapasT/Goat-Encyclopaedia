@@ -49,7 +49,7 @@ app.get('/:currentSpecies/information/:value', (request, response) => {
         const species = request.params.currentSpecies;
         const formValue = request.params.value;
         const goatEntry = goatData.find(entry => entry.species.includes(species));
-        if (goatEntry && formValue == "pro_con") {
+        if (goatEntry && formValue == "pro-con") {
             const stringFind = ["Pros", "Cons"];
             let list = [];
             let headerPosition = 0;
@@ -152,7 +152,7 @@ app.get('/:currentSpecies/commentThread', (request, response) => {
             list.push(`<div class="text-center"><strong>No one commented yet, be the first to do so!</div>`);
             list.push(`</div></div>`)
             response.send(list.join(''));
-        } else if (commentEntry) {
+        } else if (commentEntry.length > 0) {
             let list = []
             for (let i = 0; i < commentEntry.length; i++) {
                 list.push(`<div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">`)
@@ -182,7 +182,6 @@ app.post('/:currentSpecies/commentData', (request, response) => {
     try{
         let commentData = request.body;
         console.log(commentData);
-        response.send("Successfully posted");
         threadData.push(commentData);
         fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
         response.send("Successfully posted the data");
@@ -205,14 +204,9 @@ app.post('/signupData', (request, response) => {
     }
 });
 
-app.get('/loginStatus/:user', (request, response) => {
+app.get('/loginStatus/information', (request, response) => {
     try {
-        const username = request.params.user;
-        if (username === "none") {
-            response.send(`<button type="submit" id="login-button" class="btn btn-primary">Login</button>`);
-        } else {
-            response.send('<button type="submit" id="logout-button" class="btn btn-danger">Logout</button>');
-        }
+        response.send(JSON.stringify(userData))
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
