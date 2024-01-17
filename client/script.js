@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', fetchDataDefault);
 
 document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
@@ -10,10 +11,12 @@ document.getElementById('form-select').addEventListener('change', formSelected);
 
 document.getElementById('comment-submit').addEventListener('click', submitComment);
 
+document.getElementById('modal-signup-button').addEventListener('click', signUpUser);
+
 const localhost = 'http://127.0.0.1:8080';
 let currentSpecies;
 let formSelection = 'biology';
-let user;
+let currentUser = "none";
 
 function fetchGoatData(speciesValue) {
     currentSpecies = speciesValue;
@@ -87,7 +90,7 @@ async function updatePage() {
             console.error('Error fetching data:', error);
         });
     
-    await fetch(`${localhost}/loginStatus/${user}`)
+    await fetch(`${localhost}/loginStatus/${currentUser}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('login-div').innerHTML = data;
@@ -116,20 +119,19 @@ async function submitComment() {
     let nameData = document.getElementById('name-input').value;
 
     if (commentData === '') {
-        document.getElementById('comment-warning-div').innerHTML = "<strong>You Can't Submit An Empty Comment!</strong>";
+        document.getElementById('comment-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">You can't leave a empty comment!</div>`;
         return;
     } else {
-        document.getElementById('comment-warning-div').innerHTML = '';
+        document.getElementById('comment-alert-div').innerHTML = '';
     }
     if (nameData === '') {
         nameData = 'Anonymous';
     } else if (nameData.length > 10) {
-        document.getElementById('comment-warning-div').innerHTML = '<strong>10 Character Limit For Username</strong>';
+        document.getElementById('comment-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">10 Character Limit For Username!</div>`;
         return;
     } else {
-        document.getElementById('comment-warning-div').innerHTML = '';
+        document.getElementById('comment-alert-div').innerHTML = '';
     }
-
     let data = {
         species: currentSpecies,
         name: nameData,
@@ -158,4 +160,49 @@ async function submitComment() {
         .catch(error => {
             console.error('Error fetching data:', error);
         });
+}
+
+async function signUpUser(){
+    const usernameData = document.getElementById('username-signup').value;
+    const passwordData = document.getElementById('password-signup').value;
+
+    if (usernameData === ""){
+        document.getElementById('modal-username-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
+        return;
+    } else {
+        document.getElementById('modal-username-alert').innerHTML = ``;
+    }
+
+    if (passwordData === ""){
+        document.getElementById('modal-username-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
+        return;
+    } else {
+        document.getElementById('modal-username-alert').innerHTML = ``;
+    }
+
+    let data = {
+        username: usernameData,
+        password: passwordData,
+    }
+    data = JSON.stringify(data);
+    console.log(data);
+    const response = await fetch(`${localhost}/signupData`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: data
+    });
+    console.log(response);
+    document.getElementById('username-signup').value = '';
+    document.getElementById('password-signup').value = '';
+    hideModal('signup-modal')
+}
+
+function hideModal(id){
+    let modalElement = document.getElementById(id);
+    modalElement.classList.remove('show');
+    modalElement.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    document.querySelector('.modal-backdrop').remove();
 }
