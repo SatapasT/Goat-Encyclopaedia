@@ -169,7 +169,7 @@ async function signUpUser(){
     }
     data = JSON.stringify(data);
 
-    const response = await fetch(`${localhost}/signupData`, {
+    const response = await fetch(`${localhost}/post/signupData`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -219,7 +219,7 @@ async function userLogin(){
     };
     data = JSON.stringify(data);
 
-    const response = await fetch(`${localhost}/loginStatus`, {
+    const response = await fetch(`${localhost}/post/loginStatus`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

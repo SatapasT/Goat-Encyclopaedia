@@ -26,7 +26,6 @@ try {
     imageData = JSON.parse(fs.readFileSync(imageDataPath));
 } catch (error) {
     console.error('Error loading data files: ', error.message);
-    process.exit(1); // Stop the server if data files cannot be loaded
 }
 
 app.get('/goatData/:species/:value', (request, response) => {
@@ -91,8 +90,8 @@ app.get('/goatData/:species/:value', (request, response) => {
                     list.push(`
                     <div class="carousel-item${activeClass}">);
                     <img id="carousel-img"src="assets/images/${species}/${goatImg.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatImg.image[i]}" />
-                    </div>`
-                    );
+                    </div>
+                    `);
                 }
                 list.push(`
                 </div>
@@ -162,45 +161,47 @@ app.post('/:currentSpecies/commentData', (request, response) => {
     }
 });
 
-
-app.post('/signupData', (request, response) => {
-    try{
-        let signupData = request.body;
-        const nameEntry = userData.find(entry => entry.username === signupData.username)
-        console.log(nameEntry)
-        if (nameEntry) {
-            response.send("usernameTaken")
-            return
-        }
-        userData.push(signupData);
-        fs.writeFileSync(userDataPath, JSON.stringify(userData));
-        response.send("Successfully posted the data");
-    } catch (error) {
-        response.status(500).send('Internal server error');
-        console.error(error.message);
-    }
-});
-
-app.post('/loginStatus', (request, response) => {
+app.post('/post/:value', (request, response) => {
     try {
-        console.log("heelo")
-        console.log(request.body)
-        const loginData = request.body;
-        const usernameEntry = loginData.username
-        const passwordEntry = loginData.password
-        const usernameMatching = userData.find(entry => entry.username === usernameEntry);
+        const data =  request.body;
+        const queryType = request.params.value;
 
+        switch (queryType) {
+            case 'commentData':
+                console.log(data);
+                threadData.push(data);
+                fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
+                response.send("Successfully posted the data");
+                break;
+            
+            case 'signupData': 
+                const nameEntry = userData.find(entry => entry.username === data.username);
+                if (nameEntry) {
+                    response.send("usernameTaken");
+                    break; //
+                }
+                userData.push(data);
+                fs.writeFileSync(userDataPath, JSON.stringify(userData));
+                response.send("Successfully posted the data");
+                break; 
+            
+            case 'loginStatus':
+                const usernameEntry = data.username
+                const passwordEntry = data.password
+                const usernameMatching = userData.find(entry => entry.username === usernameEntry);
         if (usernameMatching["password"] === passwordEntry) {
             response.send(usernameEntry);
         } else {
             response.send("invalidLogin");
         }
-
+        break;
+        }
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
     }
 });
+
 
 const server = app.listen(8080, () => {
     console.log(`Server is running on port ${server.address().port}`);
