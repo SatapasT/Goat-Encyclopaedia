@@ -43,7 +43,6 @@ function fetchDataDefault() {
 
 function formSelected() {
     formSelection = document.getElementById('form-select').value;
-    console.log(`Form Selection Updated: %{formSelection}`);
     updatePage();
 }
 
@@ -57,7 +56,7 @@ function updatePage() {
 }
 
 async function updateTitle() {
-    await fetch(`${localhost}/${currentSpecies}`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/title`)
     .then(response => response.text())
     .then(data => {
         document.getElementById('display-center').innerHTML = data;
@@ -68,7 +67,7 @@ async function updateTitle() {
 }
 
 async function updateInformation() {
-    await fetch(`${localhost}/${currentSpecies}/information/${formSelection}`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/${formSelection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('information-div').innerHTML = data;
@@ -79,7 +78,7 @@ async function updateInformation() {
 }
 
 async function updateCommentInfo() {
-    await fetch(`${localhost}/${currentSpecies}/formInfo`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/formInfo`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment-info-div').innerHTML = data;
@@ -90,7 +89,7 @@ async function updateCommentInfo() {
 }
 
 async function updateCommentThread() {
-    await fetch(`${localhost}/${currentSpecies}/commentThread`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/commentThread`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment-thread-div').innerHTML = data;
@@ -101,7 +100,7 @@ async function updateCommentThread() {
 }
 
 async function updateImg() {
-    await fetch(`${localhost}/${currentSpecies}/image`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/image`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('img-div').innerHTML = data;
@@ -133,7 +132,6 @@ async function submitComment() {
     };
 
     data = JSON.stringify(data);
-    console.log(data);
     const response = await fetch(`${localhost}/${currentSpecies}/commentData`, {
         method: 'POST',
         headers: {
@@ -141,13 +139,20 @@ async function submitComment() {
         },
         body: data
     });
-    console.log(response);
     document.getElementById('comment-input').value = '';
     updateCommentThread()
 }
 
 async function signUpUser(){
     const passwordData = document.getElementById('password-signup').value;
+    const usernameData = document.getElementById('username-signup').value;
+
+    if (usernameData === ""){
+        document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
+        return;
+    } else {
+        document.getElementById('modal-signup-alert').innerHTML = ``;
+    }
 
     if (passwordData === ""){
         document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
@@ -156,12 +161,14 @@ async function signUpUser(){
         document.getElementById('modal-signup-alert').innerHTML = ``;
     }
 
+    
+
     let data = {
-        username: currentUser,
+        username: usernameData,
         password: passwordData,
     }
     data = JSON.stringify(data);
-    console.log(data);
+
     const response = await fetch(`${localhost}/signupData`, {
         method: 'POST',
         headers: {
@@ -169,7 +176,12 @@ async function signUpUser(){
         },
         body: data
     });
-    console.log(response);
+
+    const responseText = await response.text();
+    if (responseText === "usernameTaken") {
+        document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">That Username Is Already Taken!</div>`;
+        return;
+    }
     document.getElementById('username-signup').value = '';
     document.getElementById('password-signup').value = '';
     hideModal('signup-modal')
@@ -180,10 +192,10 @@ function userLogout(){
     currentUser = "Anonymous"
     document.getElementById('login-button').style.display = 'block';
     document.getElementById('logout-button').style.display = 'none';
+    updateNameDisplay()
 }
 
 async function userLogin(){
-
     const usernameData = document.getElementById('username-login').value;
     const passwordData = document.getElementById('password-login').value;
 
@@ -200,34 +212,29 @@ async function userLogin(){
     } else {
         document.getElementById('modal-login-alert').innerHTML = ``;
     }
+    
+    let data = {
+        username : usernameData,
+        password : passwordData
+    };
+    data = JSON.stringify(data);
 
-    updatePage()
-    await fetch(`${localhost}/loginStatus/information`)
-        .then(response => response.text())
-        .then(data => {
-            currentUser = JSON.parse(data);
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-    console.log(currentUser)
-    const UserEntry = currentUser.find(entry => entry.username.includes(usernameData));
-    console.log(UserEntry)
-    if (UserEntry) {
-        if (UserEntry["password"] === passwordData) {
-            console.log("we working")
-        } else {
-            document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">Login Does Not To Any In The Database!</div>`;
-            return
-        }
-        
-    } else {
+    const response = await fetch(`${localhost}/loginStatus`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: data
+    });
+
+    
+    const responseText = await response.text();
+    if (responseText === "invalidLogin") {
         document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">Login Does Not To Any In The Database!</div>`;
-        return
+        return;
     }
     
-    currentUser = usernameData;
-    console.log(usernameData,currentUser)
+    currentUser = responseText;
     document.getElementById('login-button').style.display = 'none';
     document.getElementById('logout-button').style.display = 'block';
     hideModal('login-modal')
@@ -236,11 +243,9 @@ async function userLogin(){
 
 function updateNameDisplay() {
     document.getElementById('name-div').innerHTML = currentUser;
-    console.log(currentUser);
 }
 
 document.addEventListener('DOMContentLoaded', fetchDataDefault);
-
 document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
 document.getElementById('kiko-goat').addEventListener('click', () => fetchGoatData('kiko_goat'));
 document.getElementById('pygora-goat').addEventListener('click', () => fetchGoatData('pygora_goat'));
