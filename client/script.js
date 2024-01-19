@@ -9,6 +9,8 @@ function hideModal(id){
     modalElement.style.display = 'none';
     document.body.classList.remove('modal-open');
     document.querySelector('.modal-backdrop').remove();
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
 }
 
 function formatDate(currentDate) {
@@ -245,9 +247,35 @@ function updateNameDisplay() {
     document.getElementById('name-div').innerHTML = currentUser;
 }
 
-function uploadPhoto() {
-    const photoFile = document.getElementById('login-button').value
-    console.log(photoFile)
+async function uploadPhoto() {
+    const photoUpload = document.getElementById('photo-input');
+
+    if (document.getElementById('photo-input').value === '') {
+        document.getElementById('upload-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">No Photo Selected!</div>`;
+        return
+    } else {
+        document.getElementById('upload-alert-div').innerHTML = ``;
+    }
+
+    if (currentUser === "Anonymous") {
+        document.getElementById('upload-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">You Must Be Login To Upload A Image!</div>`;
+        return
+    }
+    
+    const data = new FormData();
+    data.append('photo', photoUpload.files[0]);
+
+    console.log(data)
+    const response = await fetch(`${localhost}/post/${currentSpecies}/uploadPhoto`, {
+        method: 'POST',
+        body: data
+    });
+    const response2 = await fetch(`${localhost}/post/${currentSpecies}/photoData`, {
+        method: 'POST',
+        body: data
+    });
+
+    document.getElementById('photo-input').value = '';
 }
 
 document.addEventListener('DOMContentLoaded', fetchDataDefault);

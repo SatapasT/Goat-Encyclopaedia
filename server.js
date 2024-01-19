@@ -1,11 +1,29 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const multer = require('multer');
+
+// from https://www.npmjs.com/package/multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const species = req.params.species;
+        const filePath = `client/assets/images/${species}`;
+        fs.mkdirSync(filePath, { recursive: true });
+        cb(null, filePath);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+const upload = multer({ storage: storage });
 
 app.use(express.static('client'));
 app.use((request, response, next) => {
     response.header('Access-Control-Allow-Origin', '*');
     response.header('Access-Control-Allow-Headers', '*');
+    response.header('Access-Control-Allow-Methods', '*');
+    response.header('Access-Control-Allow-Credentials', '*');
     next();
 });
 
@@ -75,14 +93,18 @@ app.get('/goatData/:species/form/:value', (request, response) => {
                     let entry = goatEntry[queryType][i];
                     if (entry.includes(stringFind[headerPosition])) {
                         headerPosition += 1;
-                        list.push(`<div class="col text-start ${proConColourDict[headerPosition]} border-bottom"><h2>${entry}</h2></div>`);
+                        list.push(`
+                        <div class="col text-start ${proConColourDict[headerPosition]} border-bottom">
+                        <h2>${entry}</h2>
+                        </div>
+                        `);
                         continue;
                     }
                     list.push(`
                     <div class="col text-start ${proConColourDict[headerPosition]}">
                     ${entry}
-                    </div>`
-                    );
+                    </div>
+                    `);
                 }
                 response.send(list.join(''));
                 break;
@@ -214,7 +236,8 @@ app.get('/goatData/:species/commentThread', (request, response) => {
             <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[0]}">
             <div class="col">
             <div class="text-center"><strong>No one commented yet, be the first to do so!</div>
-            </div></div>
+            </div>
+            </div>
             `);
             
         } else {
@@ -227,7 +250,9 @@ app.get('/goatData/:species/commentThread', (request, response) => {
                 </div>
                 <div class="col-8 d-flex align-items-center justify-content-center">
                 <div class="text-center">${commentEntry[i]["comment"]}</div>
-                </div></div>`);
+                </div>
+                </div>
+                `);
             }
         }
         response.send(list.join(''));
@@ -237,7 +262,7 @@ app.get('/goatData/:species/commentThread', (request, response) => {
     }
 });
 
-app.post('/:currentSpecies/commentData', (request, response) => {
+app.post('/post/commentData', (request, response) => {
     try{
         let commentData = request.body;
         console.log(commentData);
@@ -250,23 +275,24 @@ app.post('/:currentSpecies/commentData', (request, response) => {
     }
 });
 
-app.post('/:currentSpecies/signupData', (request, response) => {
+app.post('/post/signupData', (request, response) => {
     try{
         const data =  request.body;
         const nameEntry = userData.find(entry => entry.username === data.username);
             if (nameEntry) {
                 response.send("usernameTaken");
+                return
             }
             userData.push(data);
             fs.writeFileSync(userDataPath, JSON.stringify(userData));
-            response.send("Successfully posted the data");
+            response.send(`Successfully posted the data`);
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
     }
 });
 
-app.post('/:currentSpecies/loginStatus', (request, response) => {
+app.post('/post/loginStatus', (request, response) => {
     try{
         const data =  request.body;
         const usernameEntry = data.username
@@ -283,6 +309,30 @@ app.post('/:currentSpecies/loginStatus', (request, response) => {
     }
 });
 
+// From https://www.npmjs.com/package/multer
+
+app.post('/post/:species/uploadPhoto', upload.single('photo'), function (request, response) {
+    try {
+        if (!request.file) {
+            return response.status(400).send('No file uploaded.');
+        }
+        response.send('success');
+    } catch (error) {
+        console.error(error);
+        response.status(500).send(`Internal server error: ${error.message}`);
+    }
+});
+
+app.post('/post/:species/photoData', upload.single('photo'), function (request, response) {
+    try {
+        const usernameData =  request.body;
+        const goatImg = imageData.find(entry => entry.species.includes(usernameData));
+        console.log(goatImg)
+    } catch (error) {
+        console.error(error);
+        response.status(500).send(`Internal server error: ${error.message}`);
+    }
+});
 
 const server = app.listen(8080, () => {
     console.log(`Server is running on port ${server.address().port}`);
