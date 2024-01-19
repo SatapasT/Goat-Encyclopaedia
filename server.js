@@ -15,7 +15,6 @@ const threadDataPath = 'data/thread_data.json';
 const userDataPath = 'data/user_data.json';
 const imageDataPath = 'data/image_data.json';
 const itemColourDict = { 0: "bg-light-subtle", 1: "bg-dark-subtle"};
-const proConColourDict = { 1: "bg-success-subtle", 2: "bg-danger-subtle"};
 
 let goatData, threadData, userData, imageData;
 
@@ -28,28 +27,47 @@ try {
     console.error('Error loading data files: ', error.message);
 }
 
-app.get('/goatData/:species/:value', (request, response) => {
+function validateData(data) {
+    if (data) {
+        return true;
+    } else {
+        return false;
+    }
+}
+app.get('/goatData/:species/title', (request, response) => {
+    try {
+        const species = request.params.species;
+        const goatEntry = goatData.find(entry => entry.species.includes(species));
+        if (!validateData(goatEntry)) {
+            response.send(`Error fetching data`)
+            return;
+        }
+        response.send(`<strong> > ${goatEntry["name"].toString()} < </strong>`);
+    } catch (error) {
+        response.status(500).send('Internal server error');
+        console.error(error.message);
+    }
+});
+
+
+app.get('/goatData/:species/form/:value', (request, response) => {
     try {
         const species = request.params.species;
         const queryType = request.params.value;
-
         const goatEntry = goatData.find(entry => entry.species.includes(species));
-        const goatImg = imageData.find(entry => entry.species.includes(species));
-        const commentEntry = threadData.filter(entry => entry.species.includes(species));
 
-        if (!goatEntry || !goatImg || !commentEntry) {
-            response.send('Error fetching data');
-            return; 
+        if (!validateData(goatEntry)) {
+            response.send(`Error fetching data`)
+            return;
         }
 
-        let list = [];
         const stringFind = ["Pros", "Cons"];
-        let headerPosition = 0;
+        const proConColourDict = { 1: "bg-success-subtle", 2: "bg-danger-subtle"};
 
+        let headerPosition = 0;
+        let list = [];
+        
         switch (queryType) {
-            case 'title':
-                response.send(`<strong> > ${goatEntry["name"].toString()} < </strong>`);
-                break;
 
             case 'pro-con':
                 for (let i = 0; i < goatEntry[queryType].length; i++) {
@@ -73,9 +91,26 @@ app.get('/goatData/:species/:value', (request, response) => {
                 }
                 response.send(list.join(''));
                 break;
-            
-            case 'image':
-                list.push(`
+            }
+    } catch (error) {
+        response.status(500).send('Internal server error');
+        console.error(error.message);
+    }
+});
+
+app.get('/goatData/:species/image', (request, response) => {
+    try {
+        const species = request.params.species;
+        const goatImg = imageData.find(entry => entry.species.includes(species));
+
+        if (!validateData(goatImg)) {
+            response.send(`Error fetching data`)
+            return;
+        }
+
+        let list = [];
+
+        list.push(`
                 <div id="carouselItem" class="carousel slide">
                 <div class="carousel-inner">
                 `);
@@ -106,42 +141,62 @@ app.get('/goatData/:species/:value', (request, response) => {
                 </div>
                 `);
                 response.send(list.join(''));
-                break;
+    } catch (error) {
+        response.status(500).send('Internal server error');
+        console.error(error.message);
+    }
+});
 
-            case 'formInfo':
-                response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form</p>`);
-                break;
-            
-            case 'commentThread':
-                if (commentEntry.length === 0) {
-                    list.push(`
-                    <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[0]}">
-                    <div class="col">
-                    <div class="text-center"><strong>No one commented yet, be the first to do so!</div>
-                    </div></div>
-                    `);
-                    
-                } else {
-                    for (let i = 0; i < commentEntry.length; i++) {
-                        list.push(`
-                        <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">
-                        <div class="col-4 border-end border-dark p-3">
-                        <label for="name_${i}" class="form-label">${commentEntry[i]["date"]} at ${commentEntry[i]["time"]}</label>
-                        <div class="text-center" id="name_${i}">From : ${commentEntry[i]["name"]}</div>
-                        </div>
-                        <div class="col-8 d-flex align-items-center justify-content-center">
-                        <div class="text-center">${commentEntry[i]["comment"]}</div>
-                        </div></div>`);
-                    }
-                }
-                response.send(list.join(''));
-                break;
+app.get('/goatData/:species/formInfo', (request, response) => {
+    try {
+        const species = request.params.species;
+        const goatEntry = goatData.find(entry => entry.species.includes(species));
 
-            default:
-                response.send('Invalid query type');
-                break;
-            
+        if (!validateData(goatEntry)) {
+            response.send(`Error fetching data`)
+            return;
         }
+
+        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form</p>`);
+    } catch (error) {
+        response.status(500).send('Internal server error');
+        console.error(error.message);
+    }
+});
+
+app.get('/goatData/:species/commentThread', (request, response) => {
+    try {
+        const species = request.params.species;
+        const commentEntry = threadData.filter(entry => entry.species.includes(species));
+
+        if (!validateData(commentEntry)) {
+            response.send(`Error fetching data`)
+            return;
+        }
+
+        let list = [];
+        if (commentEntry.length === 0) {
+            list.push(`
+            <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[0]}">
+            <div class="col">
+            <div class="text-center"><strong>No one commented yet, be the first to do so!</div>
+            </div></div>
+            `);
+            
+        } else {
+            for (let i = 0; i < commentEntry.length; i++) {
+                list.push(`
+                <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">
+                <div class="col-4 border-end border-dark p-3">
+                <label for="name_${i}" class="form-label">${commentEntry[i]["date"]} at ${commentEntry[i]["time"]}</label>
+                <div class="text-center" id="name_${i}">From : ${commentEntry[i]["name"]}</div>
+                </div>
+                <div class="col-8 d-flex align-items-center justify-content-center">
+                <div class="text-center">${commentEntry[i]["comment"]}</div>
+                </div></div>`);
+            }
+        }
+        response.send(list.join(''));
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
@@ -161,40 +216,32 @@ app.post('/:currentSpecies/commentData', (request, response) => {
     }
 });
 
-app.post('/post/:value', (request, response) => {
-    try {
+app.post('/:currentSpecies/signupData', (request, response) => {
+    try{
         const data =  request.body;
-        const queryType = request.params.value;
+        const nameEntry = userData.find(entry => entry.username === data.username);
+            if (nameEntry) {
+                response.send("usernameTaken");
+            }
+            userData.push(data);
+            fs.writeFileSync(userDataPath, JSON.stringify(userData));
+            response.send("Successfully posted the data");
+    } catch (error) {
+        response.status(500).send('Internal server error');
+        console.error(error.message);
+    }
+});
 
-        switch (queryType) {
-            case 'commentData':
-                console.log(data);
-                threadData.push(data);
-                fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
-                response.send("Successfully posted the data");
-                break;
-            
-            case 'signupData': 
-                const nameEntry = userData.find(entry => entry.username === data.username);
-                if (nameEntry) {
-                    response.send("usernameTaken");
-                    break; //
-                }
-                userData.push(data);
-                fs.writeFileSync(userDataPath, JSON.stringify(userData));
-                response.send("Successfully posted the data");
-                break; 
-            
-            case 'loginStatus':
-                const usernameEntry = data.username
-                const passwordEntry = data.password
-                const usernameMatching = userData.find(entry => entry.username === usernameEntry);
+app.post('/:currentSpecies/loginStatus', (request, response) => {
+    try{
+        const data =  request.body;
+        const usernameEntry = data.username
+        const passwordEntry = data.password
+        const usernameMatching = userData.find(entry => entry.username === usernameEntry);
         if (usernameMatching["password"] === passwordEntry) {
             response.send(usernameEntry);
         } else {
             response.send("invalidLogin");
-        }
-        break;
         }
     } catch (error) {
         response.status(500).send('Internal server error');

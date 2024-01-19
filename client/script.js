@@ -67,7 +67,7 @@ async function updateTitle() {
 }
 
 async function updateInformation() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/${formSelection}`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/form/${formSelection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('information-div').innerHTML = data;
