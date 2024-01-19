@@ -77,12 +77,16 @@
         <div class="row">
             <div class="col-6 bg-warning border-end border-dark" id="information-div"></div>
             <div class="col-6 bg-warning">
-                <div class="row">
+                <div class="row p-2">
                     <div class="col d-flex justify-content-center" id="img-div"></div>
                 </div>
                 <div class="row p-2">
                     <div>
                         Upload a goat image!
+                        <div class="input-group mb-3">
+                            <input type="file" class="form-control" id="photoInput" accept=".jpg" aria-describedby="inputPhoto" aria-label="Upload">
+                            <button class="btn btn-outline-secondary" type="button" id="upload-button">Upload</button>
+                        </div>                     
                     </div>
                 </div>
             </div>
@@ -99,7 +103,9 @@
                     <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#login-modal"id="login-button">
                         Login
                     </button>
-                    <button type="submit" class="btn btn-danger" id="logout-button">Logout</button>
+                    <button type="submit" class="btn btn-danger" id="logout-button">
+                        Logout
+                    </button>
                 </div>
             </div>
             <div class="col bg-warning">
@@ -110,11 +116,13 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3">
-                    <label for="name-div" class="form-label" id="name-label">Username</label>
+                <div class="col-3 justify-content-start">
+                    <label for="name-div" class="form-label" id="name-label">
+                        Username
+                    </label>
                     <div class="light bg-light text-center" id="name-div"></div>
                 </div>
-                <div class="col-9">
+                <div class="col-9 justify-content-end">
                     <label for="comment-input" class="form-label text-center" id="comment-label">
                         Leave a comment!
                     </label>
@@ -126,7 +134,7 @@
                     <button type="submit" class="btn btn-secondary text-center" id="comment-submit">
                         Submit
                     </button>
-                    <div class <div class="p-2" id="comment-alert-div"></div>
+                    <div class="p-2" id="comment-alert-div"></div>
                 </div>
             </div>
         </div>

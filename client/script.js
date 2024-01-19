@@ -1,6 +1,6 @@
 const localhost = 'http://127.0.0.1:8080';
 let currentSpecies;
-let formSelection = 'biology';
+let formSelection;
 let currentUser = "Anonymous";
 
 function hideModal(id){
@@ -245,6 +245,11 @@ function updateNameDisplay() {
     document.getElementById('name-div').innerHTML = currentUser;
 }
 
+function uploadPhoto() {
+    const photoFile = document.getElementById('login-button').value
+    console.log(photoFile)
+}
+
 document.addEventListener('DOMContentLoaded', fetchDataDefault);
 document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
 document.getElementById('kiko-goat').addEventListener('click', () => fetchGoatData('kiko_goat'));
@@ -256,5 +261,4 @@ document.getElementById('comment-submit').addEventListener('click', submitCommen
 document.getElementById('modal-signup-button').addEventListener('click', signUpUser);
 document.getElementById('logout-button').addEventListener('click', userLogout);
 document.getElementById('modal-login-button').addEventListener('click', userLogin);
-
-
+document.getElementById('upload-button').addEventListener('click', uploadPhoto);

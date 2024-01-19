@@ -58,7 +58,7 @@ app.get('/goatData/:species/form/:value', (request, response) => {
         const goatEntry = goatData.find(entry => entry.species.includes(species));
 
         if (!validateData(goatEntry)) {
-            response.send(`Error fetching data`)
+            response.status(500).send('Internal server error');
             return;
         }
 
@@ -75,10 +75,14 @@ app.get('/goatData/:species/form/:value', (request, response) => {
                     let entry = goatEntry[queryType][i];
                     if (entry.includes(stringFind[headerPosition])) {
                         headerPosition += 1;
-                        list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]} border-bottom"><h2>${entry}</h2></div></div>`);
+                        list.push(`<div class="col text-start ${proConColourDict[headerPosition]} border-bottom"><h2>${entry}</h2></div>`);
                         continue;
                     }
-                    list.push(`<div class="row"><div class="col text-start ${proConColourDict[headerPosition]}">${entry}</div></div>`);
+                    list.push(`
+                    <div class="col text-start ${proConColourDict[headerPosition]}">
+                    ${entry}
+                    </div>`
+                    );
                 }
                 response.send(list.join(''));
                 break;
@@ -88,7 +92,11 @@ app.get('/goatData/:species/form/:value', (request, response) => {
             case 'faq':
                 for (let i = 0; i < goatEntry[queryType].length; i++) {
                     let entry = goatEntry[queryType][i];
-                    list.push(`<div class="row"><div class="col text-start fs-6 ${itemColourDict[i % 2]}">${entry}</div></div>`);
+                    list.push(`
+                    <div class="col text-start fs-6 ${itemColourDict[i % 2]}">
+                    ${entry}
+                    </div>
+                    `);
                 }
                 response.send(list.join(''));
                 break;
@@ -105,43 +113,68 @@ app.get('/goatData/:species/image', (request, response) => {
         const goatImg = imageData.find(entry => entry.species.includes(species));
 
         if (!validateData(goatImg)) {
-            response.send(`Error fetching data`)
+            response.status(500).send('Internal server error');
             return;
         }
 
         let list = [];
 
         list.push(`
-                <div id="carouselItem" class="carousel slide">
-                <div class="carousel-inner">
+            <div id="carouselExampleCaptions" class="carousel slide">
+            <div class="carousel-indicators">
                 `);
-    
-                for (let i = 0; i < goatImg["image"].length; i++) {
-                    let activeClass = i;
-                    if (i === 0) {
-                        activeClass = ` active`
-                    } else {
-                        activeClass = ``
-                    }
-                    list.push(`
-                    <div class="carousel-item${activeClass}">);
-                    <img id="carousel-img"src="assets/images/${species}/${goatImg.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatImg.image[i]}" />
-                    </div>
-                    `);
+
+            for (let i = 0; i < goatImg["image"].length; i++) {
+                let activeClass = i;
+                if (i === 0) {
+                    activeClass = ` class="active" aria-current="true" aria-label="Slide 1"`
+                } else {
+                    activeClass = ``
                 }
                 list.push(`
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Slide ${i + 1}">
+                aria-label="Uploaded by ${goatImg.uploader[i]}${activeClass}">
+                </button>
+                `);
+            }
+
+            list.push(`
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselItem" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselItem" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-                </button>
+                <div class="carousel-inner">
+                `);
+
+        
+            for (let i = 0; i < goatImg["image"].length; i++) {
+                let activeClass = i;
+                if (i === 0) {
+                    activeClass = ` active`
+                } else {
+                    activeClass = ``
+                }
+                list.push(`
+                <div class="carousel-item${activeClass}">
+                    <img id="carousel-img" src="assets/images/${species}/${goatImg.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatImg.image[i]}">
+                    <div class="carousel-caption d-none d-md-block text-dark ">
+                        <h5><strong class="carousel-text">Uploaded by ${goatImg.uploader[i]}</strong></h5>
+                        <p><strong class="carousel-text">${goatImg.image[i]}</strong></p>        
+                    </div>
                 </div>
                 `);
-                response.send(list.join(''));
+            }
+
+            list.push(`
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            </div>
+            `);
+            response.send(list.join(''));
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
@@ -154,7 +187,7 @@ app.get('/goatData/:species/formInfo', (request, response) => {
         const goatEntry = goatData.find(entry => entry.species.includes(species));
 
         if (!validateData(goatEntry)) {
-            response.send(`Error fetching data`)
+            response.status(500).send('Internal server error');
             return;
         }
 
@@ -171,7 +204,7 @@ app.get('/goatData/:species/commentThread', (request, response) => {
         const commentEntry = threadData.filter(entry => entry.species.includes(species));
 
         if (!validateData(commentEntry)) {
-            response.send(`Error fetching data`)
+            response.status(500).send('Internal server error');
             return;
         }
 
