@@ -34,6 +34,7 @@ function validateData(data) {
         return false;
     }
 }
+
 app.get('/goatData/:species/title', (request, response) => {
     try {
         const species = request.params.species;
