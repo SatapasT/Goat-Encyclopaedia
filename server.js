@@ -94,14 +94,14 @@ app.get('/goatData/:species/form/:value', (request, response) => {
                     if (entry.includes(stringFind[headerPosition])) {
                         headerPosition += 1;
                         list.push(`
-                        <div class="col text-start ${proConColourDict[headerPosition]} border-bottom">
-                        <h2>${entry}</h2>
+                        <div class="col text-start ${proConColourDict[headerPosition]} border border-dark p-3 text-center">
+                        <h2> > ${entry} < </h2>
                         </div>
                         `);
                         continue;
                     }
                     list.push(`
-                    <div class="col text-start ${proConColourDict[headerPosition]}">
+                    <div class="col text-start ${proConColourDict[headerPosition]} border border-dark p-2">
                     ${entry}
                     </div>
                     `);
@@ -115,7 +115,7 @@ app.get('/goatData/:species/form/:value', (request, response) => {
                 for (let i = 0; i < goatEntry[queryType].length; i++) {
                     let entry = goatEntry[queryType][i];
                     list.push(`
-                    <div class="col text-start fs-6 ${itemColourDict[i % 2]}">
+                    <div class="col text-start fs-6 ${itemColourDict[i % 2]} border border-dark p-2">
                     ${entry}
                     </div>
                     `);
