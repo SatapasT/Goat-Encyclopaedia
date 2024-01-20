@@ -81,6 +81,13 @@ body {
     display: none;
 }
 
+#name-div {
+    height: calc(1.5em + .75rem + 2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 .carousel-text {
     color: black;
