@@ -256,8 +256,11 @@ app.get('/goatData/:species/commentThread', (request, response) => {
                 list.push(`
                 <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">
                 <div class="col-4 border-end border-dark p-3">
-                <label for="name_${i}" class="form-label">${commentEntry[i]["date"]} at ${commentEntry[i]["time"]}</label>
-                <div class="text-center" id="name_${i}">From : ${commentEntry[i]["name"]}</div>
+                <div class="text-center" id="date_time_${i}">${commentEntry[i]["date"]} at ${commentEntry[i]["time"]}</div>
+                <div class="text-center p-1" id="name_${i}">From : ${commentEntry[i]["name"]}</div>
+                <button type="button" class="btn btn-success" onclick="likeComment('${commentEntry[i]["name"]}', '${commentEntry[i]["date"]}','${commentEntry[i]["time"]}')">Like</button>
+                <div class="text-center p-1" id="likes_${i}">Likes : ${commentEntry[i]["like"]}</div>
+                <div id="${commentEntry[i]["name"]}-${commentEntry[i]["date"]}-${commentEntry[i]["time"]}"></div>
                 </div>
                 <div class="col-8 d-flex align-items-center justify-content-center">
                 <div class="text-center scroll-item">${commentEntry[i]["comment"]}</div>
@@ -348,6 +351,47 @@ app.post('/post/:species/photoData', upload.single('photo'), function (request, 
         fs.writeFileSync(imageDataPath, JSON.stringify(imageData));
         response.send(`Successfully posted the data`);
         
+    } catch (error) {
+        console.error(error);
+        response.status(500).send(`Internal server error: ${error.message}`);
+    }
+});
+
+app.post('/post/like', (request, response) => {
+    try {
+        const data = request.body;
+        const name = data.name;
+        const date = data.date;
+        const time = data.time;
+        const likeEntryName = threadData.filter(entry => entry.name.includes(name));
+
+
+        console.log("_____________________________________________________")
+        if (!(likeEntryName)){
+            console.log("not working")
+        }
+
+        const likeEntryDate = threadData.filter(entry => entry.date.includes(date));
+        if (!(likeEntryDate)){
+            console.log("not working")
+        }
+
+        const likeEntry = threadData.filter(entry => entry.time.includes(time));
+        if (!(likeEntryName)){
+            console.log("not working")
+        }
+
+        const likeBy = threadData.find(entry => entry.likeBy);
+        console.log(likeBy)
+        for (let i = 0; i < likeEntry.likeBy.length; i++) {
+            if (likeEntry.likeBy[i] === name) {
+                console.log(likeEntry.likeBy[i])
+            }
+        }
+        
+
+        console.log(likeEntry)
+
     } catch (error) {
         console.error(error);
         response.status(500).send(`Internal server error: ${error.message}`);

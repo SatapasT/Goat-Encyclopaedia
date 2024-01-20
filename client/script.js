@@ -299,6 +299,33 @@ async function uploadPhoto() {
     updateImg();
 }
 
+async function likeComment(name, date, time) {
+    try {
+        if (currentUser === "Anonymous") {
+            document.getElementById(`${name}-${date}-${time}`).innerHTML = `<div class="alert alert-danger" role="alert">Login to Like!</div>`;
+        } else {
+            document.getElementById(`${name}-${date}-${time}`).innerHTML = ``;
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+    let data = {
+        name : name,
+        date : date,
+        time : time
+    }
+
+    data = JSON.stringify(data);
+    
+    const response = await fetch(`${localhost}/post/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: data
+    });
+}
+
 document.addEventListener('DOMContentLoaded', initializeHTML);
 document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
 document.getElementById('kiko-goat').addEventListener('click', () => fetchGoatData('kiko_goat'));
