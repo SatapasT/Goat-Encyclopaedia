@@ -161,13 +161,12 @@ app.get('/goatData/:species/image', (request, response) => {
             for (let i = 0; i < goatImg["image"].length; i++) {
                 let activeClass = i;
                 if (i === 0) {
-                    activeClass = ` class="active" aria-current="true" aria-label="Slide 1"`
+                    activeClass = ` class="active" aria-current="true"`
                 } else {
                     activeClass = ``
                 }
                 list.push(`
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Slide ${i + 1}">
-                aria-label="Uploaded by ${goatImg.uploader[i]}${activeClass}">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Uploaded by ${goatImg.uploader[i]}">
                 </button>
                 `);
             }
@@ -187,10 +186,10 @@ app.get('/goatData/:species/image', (request, response) => {
                 }
                 list.push(`
                 <div class="carousel-item${activeClass}">
-                    <img id="carousel-img" src="assets/images/${species}/${goatImg.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatImg.image[i]}">
-                    <div class="carousel-caption d-none d-md-block text-dark ">
-                        <h5><strong class="carousel-text">${upperCase(goatImg.image[i])}</strong></h5>
-                        <p><strong class="carousel-text">Uploaded by ${goatImg.uploader[i]}</strong></p>        
+                <img id="carousel-img" class="p-2" src="assets/images/${species}/${goatImg.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatImg.image[i]}">
+                    <div class="carousel-caption d-none d-md-block text-dark">
+                        <h5><strong class="carousel-text glow">${upperCase(goatImg.image[i])}</strong></h5>
+                        <p><strong class="carousel-text glow">Uploaded by ${goatImg.uploader[i]}</strong></p>        
                     </div>
                 </div>
                 `);

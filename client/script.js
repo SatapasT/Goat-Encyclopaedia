@@ -3,6 +3,11 @@ let currentSpecies;
 let formSelection;
 let currentUser = "Anonymous";
 
+function initializeHTML() {
+    document.getElementById('login-button').style.display = 'block';
+    fetchDataDefault()
+    
+}
 function hideModal(id){
     let modalElement = document.getElementById(id);
     modalElement.classList.remove('show');
@@ -119,9 +124,11 @@ async function submitComment() {
     const commentData = document.getElementById('comment-input').value;
 
     if (commentData === '') {
+        document.getElementById('logout-button').style.display = 'none';
         document.getElementById('comment-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">You can't leave a empty comment!</div>`;
         return;
     } else {
+        document.getElementById('login-button').style.display = 'block';
         document.getElementById('comment-alert-div').innerHTML = '';
     }
 
@@ -134,7 +141,7 @@ async function submitComment() {
     };
 
     data = JSON.stringify(data);
-    const response = await fetch(`${localhost}/${currentSpecies}/commentData`, {
+    const response = await fetch(`${localhost}/post/commentData`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -292,7 +299,7 @@ async function uploadPhoto() {
     updateImg();
 }
 
-document.addEventListener('DOMContentLoaded', fetchDataDefault);
+document.addEventListener('DOMContentLoaded', initializeHTML);
 document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
 document.getElementById('kiko-goat').addEventListener('click', () => fetchGoatData('kiko_goat'));
 document.getElementById('pygora-goat').addEventListener('click', () => fetchGoatData('pygora_goat'));
