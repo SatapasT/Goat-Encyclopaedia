@@ -62,7 +62,7 @@ body {
     padding: 5px;
 }
 
-.text-center{
+.scroll-item{
     overflow-y: scroll;
 }
 
@@ -99,3 +99,4 @@ body {
         0 0 25px #bbb,
         0 0 30px #aaa;
 }
+

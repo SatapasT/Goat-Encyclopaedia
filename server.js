@@ -261,7 +261,7 @@ app.get('/goatData/:species/commentThread', (request, response) => {
                 <div class="text-center" id="name_${i}">From : ${commentEntry[i]["name"]}</div>
                 </div>
                 <div class="col-8 d-flex align-items-center justify-content-center">
-                <div class="text-center">${commentEntry[i]["comment"]}</div>
+                <div class="text-center scroll-item">${commentEntry[i]["comment"]}</div>
                 </div>
                 </div>
                 `);
