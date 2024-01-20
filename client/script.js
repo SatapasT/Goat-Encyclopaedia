@@ -264,18 +264,32 @@ async function uploadPhoto() {
     
     const data = new FormData();
     data.append('photo', photoUpload.files[0]);
+    let fileName = photoUpload.files[0].name;
+    fileName = fileName.substring(0, fileName.length-4);
 
-    console.log(data)
+    console.log(fileName);
     const response = await fetch(`${localhost}/post/${currentSpecies}/uploadPhoto`, {
         method: 'POST',
         body: data
     });
+
+    let data2 = {
+        species : currentSpecies,
+        image : fileName,
+        uploader : currentUser
+    }
+    data2 = JSON.stringify(data2);
+
     const response2 = await fetch(`${localhost}/post/${currentSpecies}/photoData`, {
         method: 'POST',
-        body: data
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: data2
     });
 
     document.getElementById('photo-input').value = '';
+    updateImg();
 }
 
 document.addEventListener('DOMContentLoaded', fetchDataDefault);

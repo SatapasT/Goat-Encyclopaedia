@@ -325,9 +325,18 @@ app.post('/post/:species/uploadPhoto', upload.single('photo'), function (request
 
 app.post('/post/:species/photoData', upload.single('photo'), function (request, response) {
     try {
-        const usernameData =  request.body;
-        const goatImg = imageData.find(entry => entry.species.includes(usernameData));
-        console.log(goatImg)
+        const species = request.params.species;
+        const fileName = request.body.image;
+        const usernameData =  request.body.uploader;
+    
+        const goatImg = imageData.find(entry => entry.species.includes(species));
+
+        goatImg.image.push(fileName);
+        goatImg.uploader.push(usernameData);
+        
+        fs.writeFileSync(imageDataPath, JSON.stringify(imageData));
+        response.send(`Successfully posted the data`);
+        
     } catch (error) {
         console.error(error);
         response.status(500).send(`Internal server error: ${error.message}`);
