@@ -53,6 +53,18 @@ function validateData(data) {
     }
 }
 
+function upperCase(word) {
+    try {
+        const firstLetter = word.charAt(0)
+        const newWord = firstLetter.toUpperCase() + word.substring(1)
+        return newWord
+
+    } catch (error) {
+        return word
+    }
+    
+}
+
 app.get('/goatData/:species/title', (request, response) => {
     try {
         const species = request.params.species;
@@ -177,8 +189,8 @@ app.get('/goatData/:species/image', (request, response) => {
                 <div class="carousel-item${activeClass}">
                     <img id="carousel-img" src="assets/images/${species}/${goatImg.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatImg.image[i]}">
                     <div class="carousel-caption d-none d-md-block text-dark ">
-                        <h5><strong class="carousel-text">Uploaded by ${goatImg.uploader[i]}</strong></h5>
-                        <p><strong class="carousel-text">${goatImg.image[i]}</strong></p>        
+                        <h5><strong class="carousel-text">${upperCase(goatImg.image[i])}</strong></h5>
+                        <p><strong class="carousel-text">Uploaded by ${goatImg.uploader[i]}</strong></p>        
                     </div>
                 </div>
                 `);
