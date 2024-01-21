@@ -265,8 +265,8 @@ app.get('/goatData/:species/commentThread/:ordering', (request, response) => {
                 <div class="col-4 border-end border-dark p-3">
                 <div class="text-center" id="date_time_${i}">${commentEntry[i]["date"]} at ${commentEntry[i]["time"]}</div>
                 <div class="text-center p-1" id="name_${i}">From : ${commentEntry[i]["name"]}</div>
-                <button type="button" class="btn btn-success" onclick="likeComment('${commentEntry[i]["name"]}', '${commentEntry[i]["date"]}','${commentEntry[i]["time"]}')">Like</button>
                 <div class="text-center p-1" id="likes_${i}">Likes : ${commentEntry[i]["like"]}</div>
+                <button type="button" class="btn btn-success" onclick="likeComment('${commentEntry[i]["name"]}', '${commentEntry[i]["date"]}','${commentEntry[i]["time"]}')">Like</button>
                 <div id="${commentEntry[i]["name"]}-${commentEntry[i]["date"]}-${commentEntry[i]["time"]}"></div>
                 </div>
                 <div class="col-8 d-flex align-items-center justify-content-center">

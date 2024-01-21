@@ -1,4 +1,5 @@
-const localhost = 'http://127.0.0.1:8080';
+const localHost = 'http://127.0.0.1:8080';
+const errorPageUrl = `${localHost}/error_page.html`;
 let currentSpecies;
 let informationSelection = "biology";
 let currentUser = "Anonymous";
@@ -8,8 +9,56 @@ function initializeHTML() {
     document.getElementById('login-button').style.display = 'block';
     document.getElementById('information-select').selectedIndex = 0;
     document.getElementById('ordering-select').selectedIndex = 0;
+    document.getElementById('photo-input').value = '';
+    document.getElementById('username-signup').value = '';
+    document.getElementById('password-signup').value = '';
+    document.getElementById('username-login').value = ``;
+    document.getElementById('password-login').value = ``;
     fetchDataDefault()
 }
+
+function checkServerStatus() {
+    fetch(`${localHost}/goatData/default_goal/title`)
+        .then(response => {
+            if (response.ok) {
+                return
+            } else {
+                displayErrorMessage();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            displayErrorMessage();
+        });
+}
+
+function displayErrorMessage() {
+    document.body.innerHTML = `
+        <div class="row full-height-row">
+            <div class="col d-flex align-items-center justify-content-center">
+                <div class="text-center">
+                    <h1>Error 404 : Goat not founded</h1>
+                    <h4>There was a error connecting to the server</h4>
+                    <button type="button" class="btn btn-primary" onclick="checkErrorServerStatus()">Retry Connection</button>
+                </div>
+            </div>
+        </div>
+`;
+}
+
+function checkErrorServerStatus() {
+    fetch(`${localHost}/goatData/default_goal/title`)
+    .then(response => {
+        if (response.ok) {
+            window.location.href = localHost;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Server is not reachable! Try reloading in a few moment!")
+    });
+}
+
 function hideModal(id){
     let modalElement = document.getElementById(id);
     modalElement.classList.remove('show');
@@ -69,58 +118,75 @@ function updatePage() {
     updateNameDisplay()
 }
 
+function userLogout(){
+    currentUser = "Anonymous"
+    document.getElementById('login-button').style.display = 'block';
+    document.getElementById('logout-button').style.display = 'none';
+    updateNameDisplay()
+}
+
+function updateNameDisplay() {
+    document.getElementById('name-div').innerHTML = currentUser;
+}
+
+
 async function updateTitle() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/title`)
+    await fetch(`${localHost}/goatData/${currentSpecies}/title`)
     .then(response => response.text())
     .then(data => {
         document.getElementById('display-center').innerHTML = data;
     })
     .catch(error => {
         console.error('Error fetching data:', error);
+        displayErrorMessage();
     });
 }
 
 async function updateInformation() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/form/${informationSelection}`)
+    await fetch(`${localHost}/goatData/${currentSpecies}/form/${informationSelection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('information-div').innerHTML = data;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
+            displayErrorMessage();
         });
 }
 
 async function updateCommentInfo() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/formInfo`)
+    await fetch(`${localHost}/goatData/${currentSpecies}/formInfo`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment-info-div').innerHTML = data;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
+            displayErrorMessage();
         });
 }
 
 async function updateCommentThread() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/commentThread/${orderingSelection}`)
+    await fetch(`${localHost}/goatData/${currentSpecies}/commentThread/${orderingSelection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment-thread-div').innerHTML = data;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
+            displayErrorMessage();
         });
 }
 
 async function updateImg() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/image`)
+    await fetch(`${localHost}/goatData/${currentSpecies}/image`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('img-div').innerHTML = data;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
+            displayErrorMessage();
         });
 }
 
@@ -144,11 +210,13 @@ async function submitComment() {
         name: currentUser,
         comment: commentData,
         date: dateData,
-        time: timeData
+        time: timeData,
+        like: 0,
+        likeBy: []
     };
 
     data = JSON.stringify(data);
-    const response = await fetch(`${localhost}/post/commentData`, {
+    const response = await fetch(`${localHost}/post/commentData`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -185,7 +253,7 @@ async function signUpUser(){
     }
     data = JSON.stringify(data);
 
-    const response = await fetch(`${localhost}/post/signupData`, {
+    const response = await fetch(`${localHost}/post/signupData`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -201,14 +269,6 @@ async function signUpUser(){
     document.getElementById('username-signup').value = '';
     document.getElementById('password-signup').value = '';
     hideModal('signup-modal')
-}
-
-
-function userLogout(){
-    currentUser = "Anonymous"
-    document.getElementById('login-button').style.display = 'block';
-    document.getElementById('logout-button').style.display = 'none';
-    updateNameDisplay()
 }
 
 async function userLogin(){
@@ -235,7 +295,7 @@ async function userLogin(){
     };
     data = JSON.stringify(data);
 
-    const response = await fetch(`${localhost}/post/loginStatus`, {
+    const response = await fetch(`${localHost}/post/loginStatus`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -254,12 +314,11 @@ async function userLogin(){
     document.getElementById('login-button').style.display = 'none';
     document.getElementById('logout-button').style.display = 'block';
     hideModal('login-modal')
+    document.getElementById('username-login').value = ``;
+    document.getElementById('password-login').value = ``;
     updateNameDisplay()
 }
 
-function updateNameDisplay() {
-    document.getElementById('name-div').innerHTML = currentUser;
-}
 
 async function uploadPhoto() {
     const photoUpload = document.getElementById('photo-input');
@@ -281,7 +340,7 @@ async function uploadPhoto() {
     let fileName = photoUpload.files[0].name;
     fileName = fileName.substring(0, fileName.length-4);
 
-    const response = await fetch(`${localhost}/post/${currentSpecies}/uploadPhoto`, {
+    const response = await fetch(`${localHost}/post/${currentSpecies}/uploadPhoto`, {
         method: 'POST',
         body: data
     });
@@ -293,7 +352,7 @@ async function uploadPhoto() {
     }
     data2 = JSON.stringify(data2);
 
-    const response2 = await fetch(`${localhost}/post/${currentSpecies}/photoData`, {
+    const response2 = await fetch(`${localHost}/post/${currentSpecies}/photoData`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -322,7 +381,7 @@ async function likeComment(name, date, time) {
 
         data = JSON.stringify(data);
 
-        const response = await fetch(`${localhost}/post/like`, {
+        const response = await fetch(`${localHost}/post/like`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -341,13 +400,10 @@ async function likeComment(name, date, time) {
             updateCommentThread()
         }
         
-    
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
-
-
 
 document.addEventListener('DOMContentLoaded', initializeHTML);
 document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
@@ -362,3 +418,5 @@ document.getElementById('logout-button').addEventListener('click', userLogout);
 document.getElementById('modal-login-button').addEventListener('click', userLogin);
 document.getElementById('upload-button').addEventListener('click', uploadPhoto);
 document.getElementById('ordering-select').addEventListener('change', orderingSelected);
+
+setInterval(checkServerStatus, 10000);
