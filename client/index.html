@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <div class="background-image"></div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-body sticky-top">
+    <div class="background-image" id="background-image"></div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-body sticky-top" id="navbar">
         <div class="container align-items-start">
             <a class="navbar-brand" href="#" id="navbar-icon">
                 <img src="/assets/images/goat_emoji.png" alt="Goat Emoji" width="30" height="24"
@@ -72,7 +72,7 @@
             </div>
         </div>
     </nav>
-    <div class="container text-center">
+    <div class="container text-center" id="main-container">
         <div class="row">
             <div class="col p-3 bg-primary border-bottom border-dark border-start-0">
                 <h1 class="display-1 b" id="display-center">
@@ -224,6 +224,14 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <div class="row full-height-row min-vh-100 d-flex align-items-center" id="error-page">
+        <div class="col text-center">
+            <h1>Error 404: Goat not found</h1>
+            <h4>There was an error connecting to the server</h4>
+            <button type="button" class="btn btn-primary" id="reload-button" onClick="checkErrorServerStatus()">Retry Connection</button>
         </div>
     </div>
 

@@ -32,24 +32,21 @@ function checkServerStatus () {
 }
 
 function displayErrorMessage () {
-  document.body.innerHTML = `
-        <div class="row full-height-row">
-            <div class="col d-flex align-items-center justify-content-center">
-                <div class="text-center">
-                    <h1>Error 404 : Goat not founded</h1>
-                    <h4>There was a error connecting to the server</h4>
-                    <button type="button" class="btn btn-primary" onclick="checkErrorServerStatus()">Retry Connection</button>
-                </div>
-            </div>
-        </div>
-    `
+  document.getElementById('navbar').style.display = 'none'
+  document.getElementById('main-container').style.display = 'none'
+  document.getElementById('background-image').style.display = 'none'
+  document.getElementById('error-page').style.display = 'block'
 }
 
 function checkErrorServerStatus () {
-  fetch(`${localHost}/goatData/default_goal/title`)
+  fetch(`${localHost}/goatData/default_goal`)
     .then((response) => {
       if (response.ok) {
-        window.location.href = localHost
+        document.getElementById('navbar').style.display = 'block'
+        document.getElementById('main-container').style.display = 'block'
+        document.getElementById('background-image').style.display = 'block'
+        document.getElementById('error-page').style.display = 'none'
+        updatePage()
       }
     })
     .catch((error) => {
@@ -240,8 +237,8 @@ async function updateCommentThread () {
                     <div class="text-center" id="date_time_${i}">${data[i].date} at ${data[i].time}</div>
                     <div class="text-center p-1" id="name_${i}">From : ${data[i].name}</div>
                     <div class="text-center p-1" id="likes_${i}">Likes : ${data[i].like}</div>
-                    <button type="button" class="btn btn-success" onclick="likeComment('${data[i].name}', '${data[i].date}','${data[i].time}')">Like</button>
-                    <div id="${data[i].name}-${data[i].date}-${data[i].time}"></div>
+                    <button type="button" class="btn btn-success" id="${data[i].name}-${data[i].date}-${data[i].time}">Like</button>
+                    <div id="alert-${data[i].name}-${data[i].date}-${data[i].time}"></div>
                     </div>
                     <div class="col-8 d-flex align-items-center justify-content-center">
                     <div class="text-center scroll-item">${data[i].comment}</div>
@@ -267,7 +264,7 @@ async function updateImg () {
     .then(response => response.json())
     .then(data => {
       list.push(`
-        <div id="carouselExampleCaptions" class="carousel slide">
+        <div id="carouselCaptions" class="carousel slide">
         <div class="carousel-indicators">
         `)
 
@@ -279,7 +276,7 @@ async function updateImg () {
           activeClass = ''
         }
         list.push(`
-          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Uploaded by ${data.uploader[i]}">
+          <button type="button" data-bs-target="#carouselCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Uploaded by ${data.uploader[i]}">
           </button>
           `)
       }
@@ -309,11 +306,11 @@ async function updateImg () {
 
       list.push(`
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselCaptions" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselCaptions" data-bs-slide="next">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
         </button>
@@ -341,6 +338,7 @@ async function submitComment () {
     return
   } else {
     document.getElementById('login-button').style.display = 'block'
+    document.getElementById('logout-button').style.display = 'none'
     document.getElementById('comment-alert-div').innerHTML = ''
   }
 
@@ -362,6 +360,9 @@ async function submitComment () {
     },
     body: data
   })
+  if (!(response.text() === 'success')) {
+    displayErrorMessage()
+  }
   document.getElementById('comment-input').value = ''
   updateCommentThread()
 }
@@ -490,6 +491,9 @@ async function uploadPhoto () {
       body: data
     }
   )
+  if (!(response.text() === 'success')) {
+    displayErrorMessage()
+  }
 
   let data2 = {
     species: currentSpecies,
@@ -509,6 +513,10 @@ async function uploadPhoto () {
     }
   )
 
+  if (!(response2.text() === 'success')) {
+    displayErrorMessage()
+  }
+
   document.getElementById('photo-input').value = ''
   updateImg()
 }
@@ -516,11 +524,11 @@ async function uploadPhoto () {
 async function likeComment (name, date, time) {
   try {
     if (currentUser === 'Anonymous') {
-      document.getElementById(`${name}-${date}-${time}`).innerHTML =
+      document.getElementById(`alert-${name}-${date}-${time}`).innerHTML =
         '<div class="alert alert-danger" role="alert">Login to Like!</div>'
       return
     } else {
-      document.getElementById(`${name}-${date}-${time}`).innerHTML = ''
+      document.getElementById(`alert-${name}-${date}-${time}`).innerHTML = ''
     }
     let data = {
       name,
@@ -542,18 +550,27 @@ async function likeComment (name, date, time) {
     const responseText = await response.text()
 
     if (responseText === 'error') {
-      document.getElementById(`${name}-${date}-${time}`).innerHTML =
+      document.getElementById(`alert-${name}-${date}-${time}`).innerHTML =
         '<div class="alert alert-danger" role="alert">Error Fetching Data!</div>'
     } else if (responseText === 'alreadyLiked') {
-      document.getElementById(`${name}-${date}-${time}`).innerHTML =
-        '<div class="alert alert-danger" role="alert">You Already Liked!</div>'
+      document.getElementById(`alert-${name}-${date}-${time}`).innerHTML =
+        '<div class="alert alert-danger" role="alert">You Already Liked This Comment!</div>'
     } else {
-      document.getElementById(`${name}-${date}-${time}`).innerHTML = ''
+      document.getElementById(`alert-${name}-${date}-${time}`).innerHTML = ''
       updateCommentThread()
     }
   } catch (error) {
     console.error('Error fetching data:', error)
     displayErrorMessage()
+  }
+}
+
+function likeButtonClick (event) {
+  console.log(event.target.tagName)
+  if (event.target.tagName === 'BUTTON') {
+    const buttonId = event.target.id
+    const [name, date, time] = buttonId.split('-')
+    likeComment(name, date, time)
   }
 }
 
@@ -570,5 +587,9 @@ document.getElementById('logout-button').addEventListener('click', userLogout)
 document.getElementById('modal-login-button').addEventListener('click', userLogin)
 document.getElementById('upload-button').addEventListener('click', uploadPhoto)
 document.getElementById('ordering-select').addEventListener('change', orderingSelected)
+document.getElementById('comment-thread-div').addEventListener('click', function (event) {
+  likeButtonClick(event)
+})
+document.getElementById('reload-button').addEventListener('click', checkErrorServerStatus)
 
 setInterval(checkServerStatus, 10000)

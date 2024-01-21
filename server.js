@@ -116,7 +116,7 @@ app.post('/post/commentData', (request, response) => {
     const commentData = request.body
     threadData.push(commentData)
     fs.writeFileSync(threadDataPath, JSON.stringify(threadData))
-    response.send('Successfully posted the data')
+    response.send('success')
   } catch (error) {
     response.status(500).send('Internal server error')
     console.error(error.message)
@@ -145,9 +145,11 @@ app.post('/post/loginStatus', (request, response) => {
     const data = request.body
     const usernameEntry = data.username
     const passwordEntry = data.password
-    const usernameMatching = userData.find(
-      (entry) => entry.username === usernameEntry
-    )
+    const usernameMatching = userData.find((entry) => entry.username === usernameEntry)
+    if (!usernameMatching) {
+      response.send('invalidLogin')
+      return
+    }
     if (usernameMatching.password === passwordEntry) {
       response.send(usernameEntry)
     } else {
@@ -192,7 +194,7 @@ app.post(
       goatImg.uploader.push(usernameData)
 
       fs.writeFileSync(imageDataPath, JSON.stringify(imageData))
-      response.send('Successfully posted the data')
+      response.send('success')
     } catch (error) {
       console.error(error)
       response.status(500).send(`Internal server error: ${error.message}`)
