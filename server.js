@@ -279,7 +279,6 @@ app.get('/goatData/:species/commentThread', (request, response) => {
 app.post('/post/commentData', (request, response) => {
     try{
         let commentData = request.body;
-        console.log(commentData);
         threadData.push(commentData);
         fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
         response.send("Successfully posted the data");
@@ -363,34 +362,43 @@ app.post('/post/like', (request, response) => {
         const name = data.name;
         const date = data.date;
         const time = data.time;
+        const currentUser = data.currentUser;
         const likeEntryName = threadData.filter(entry => entry.name.includes(name));
 
 
-        console.log("_____________________________________________________")
         if (!(likeEntryName)){
-            console.log("not working")
+            response.send("error")
+            return
         }
 
         const likeEntryDate = threadData.filter(entry => entry.date.includes(date));
         if (!(likeEntryDate)){
-            console.log("not working")
+            response.send("error")
+            return
         }
 
         const likeEntry = threadData.filter(entry => entry.time.includes(time));
-        if (!(likeEntryName)){
-            console.log("not working")
+        if (!(likeEntry)){
+            response.send("error")
+            return
         }
 
-        const likeBy = threadData.find(entry => entry.likeBy);
-        console.log(likeBy)
-        for (let i = 0; i < likeEntry.likeBy.length; i++) {
-            if (likeEntry.likeBy[i] === name) {
-                console.log(likeEntry.likeBy[i])
+        const matchingEntry = likeEntry[0]
+        const likeBy = matchingEntry.likeBy;
+        for (let i = 0; i < likeBy.length; i++) {
+            if (likeBy[i] === currentUser) {
+                response.send("alreadyLiked")
+                return
             }
         }
-        
 
-        console.log(likeEntry)
+        let index = threadData.findIndex(entry => entry.name === name && entry.date === date && entry.time === time);
+        matchingEntry.likeBy.push(currentUser);
+        matchingEntry.like = likeEntry[0].likeBy.length;
+        threadData[index] = matchingEntry;
+        
+        fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
+        response.send("success") 
 
     } catch (error) {
         console.error(error);

@@ -274,7 +274,6 @@ async function uploadPhoto() {
     let fileName = photoUpload.files[0].name;
     fileName = fileName.substring(0, fileName.length-4);
 
-    console.log(fileName);
     const response = await fetch(`${localhost}/post/${currentSpecies}/uploadPhoto`, {
         method: 'POST',
         body: data
@@ -303,27 +302,42 @@ async function likeComment(name, date, time) {
     try {
         if (currentUser === "Anonymous") {
             document.getElementById(`${name}-${date}-${time}`).innerHTML = `<div class="alert alert-danger" role="alert">Login to Like!</div>`;
+            return
         } else {
             document.getElementById(`${name}-${date}-${time}`).innerHTML = ``;
         }
+        let data = {
+            name : name,
+            date : date,
+            time : time,
+            currentUser : currentUser,
+        }
+
+        data = JSON.stringify(data);
+
+        const response = await fetch(`${localhost}/post/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: data
+        });
+
+        const responseText = await response.text();
+
+        if (responseText === "error") {
+            document.getElementById(`${name}-${date}-${time}`).innerHTML = `<div class="alert alert-danger" role="alert">Error Fetching Data!</div>`;
+        } else if (responseText === "alreadyLiked") {
+            document.getElementById(`${name}-${date}-${time}`).innerHTML = `<div class="alert alert-danger" role="alert">You Already Liked!</div>`;
+        } else {
+            document.getElementById(`${name}-${date}-${time}`).innerHTML = ``;
+            updateCommentThread()
+        }
+        
+    
     } catch (error) {
         console.error('Error fetching data:', error);
     }
-    let data = {
-        name : name,
-        date : date,
-        time : time
-    }
-
-    data = JSON.stringify(data);
-    
-    const response = await fetch(`${localhost}/post/like`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: data
-    });
 }
 
 document.addEventListener('DOMContentLoaded', initializeHTML);
