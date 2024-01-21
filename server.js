@@ -231,14 +231,21 @@ app.get('/goatData/:species/formInfo', (request, response) => {
     }
 });
 
-app.get('/goatData/:species/commentThread', (request, response) => {
+app.get('/goatData/:species/commentThread/:ordering', (request, response) => {
     try {
         const species = request.params.species;
+        const ordering = request.params.ordering;
         const commentEntry = threadData.filter(entry => entry.species.includes(species));
 
         if (!validateData(commentEntry)) {
             response.status(500).send('Internal server error');
             return;
+        }
+
+        if (ordering === "ascending") {
+            commentEntry.sort((a, b) => a.like - b.like);
+        } else if (ordering === "descending") {
+            commentEntry.sort((a, b) => b.like - a.like);
         }
 
         let list = [];

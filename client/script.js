@@ -1,7 +1,8 @@
 const localhost = 'http://127.0.0.1:8080';
 let currentSpecies;
-let formSelection;
+let informationSelection = "biology";
 let currentUser = "Anonymous";
+let orderingSelection = "time";
 
 function initializeHTML() {
     document.getElementById('login-button').style.display = 'block';
@@ -36,7 +37,7 @@ function fetchGoatData(speciesValue) {
     currentSpecies = speciesValue;
     updatePage();
     updateImg();
-    formSelected();
+    informationSelected();
 }
 
 function fetchDataDefault() {
@@ -48,9 +49,14 @@ function fetchDataDefault() {
 }
 
 
-function formSelected() {
-    formSelection = document.getElementById('form-select').value;
-    updatePage();
+function informationSelected() {
+    informationSelection = document.getElementById('information-select').value;
+    updateInformation()
+}
+
+function orderingSelected() {
+    orderingSelection = document.getElementById('ordering-select').value;
+    updateCommentThread()
 }
 
 function updatePage() {
@@ -74,7 +80,7 @@ async function updateTitle() {
 }
 
 async function updateInformation() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/form/${formSelection}`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/form/${informationSelection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('information-div').innerHTML = data;
@@ -96,7 +102,7 @@ async function updateCommentInfo() {
 }
 
 async function updateCommentThread() {
-    await fetch(`${localhost}/goatData/${currentSpecies}/commentThread`)
+    await fetch(`${localhost}/goatData/${currentSpecies}/commentThread/${orderingSelection}`)
         .then(response => response.text())
         .then(data => {
             document.getElementById('comment-thread-div').innerHTML = data;
@@ -340,15 +346,18 @@ async function likeComment(name, date, time) {
     }
 }
 
+
+
 document.addEventListener('DOMContentLoaded', initializeHTML);
 document.getElementById('navbar-icon').addEventListener('click', fetchDataDefault);
 document.getElementById('kiko-goat').addEventListener('click', () => fetchGoatData('kiko_goat'));
 document.getElementById('pygora-goat').addEventListener('click', () => fetchGoatData('pygora_goat'));
 document.getElementById('angora-goat').addEventListener('click', () => fetchGoatData('angora_goat'));
 document.getElementById('pygmy-goat').addEventListener('click', () => fetchGoatData('pygmy_goat'));
-document.getElementById('form-select').addEventListener('change', formSelected);
+document.getElementById('information-select').addEventListener('change', informationSelected);
 document.getElementById('comment-submit').addEventListener('click', submitComment);
 document.getElementById('modal-signup-button').addEventListener('click', signUpUser);
 document.getElementById('logout-button').addEventListener('click', userLogout);
 document.getElementById('modal-login-button').addEventListener('click', userLogin);
 document.getElementById('upload-button').addEventListener('click', uploadPhoto);
+document.getElementById('ordering-select').addEventListener('change', orderingSelected);
