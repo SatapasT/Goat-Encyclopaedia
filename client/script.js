@@ -1,5 +1,6 @@
 const localHost = 'http://127.0.0.1:8080';
-const errorPageUrl = `${localHost}/error_page.html`;
+const itemColourDict = { 0: "bg-light-subtle", 1: "bg-dark-subtle" };
+
 let currentSpecies;
 let informationSelection = "biology";
 let currentUser = "Anonymous";
@@ -18,7 +19,7 @@ function initializeHTML() {
 }
 
 function checkServerStatus() {
-    fetch(`${localHost}/goatData/default_goal/title`)
+    fetch(`${localHost}/goatData/default_goal`)
         .then(response => {
             if (response.ok) {
                 return
@@ -48,18 +49,29 @@ function displayErrorMessage() {
 
 function checkErrorServerStatus() {
     fetch(`${localHost}/goatData/default_goal/title`)
-    .then(response => {
-        if (response.ok) {
-            window.location.href = localHost;
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Server is not reachable! Try reloading in a few moment!")
-    });
+        .then(response => {
+            if (response.ok) {
+                window.location.href = localHost;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Server is not reachable! Try reloading in a few moment!")
+        });
 }
 
-function hideModal(id){
+function upperCase(word) {
+    try {
+        const firstLetter = word.charAt(0)
+        const newWord = firstLetter.toUpperCase() + word.substring(1)
+        return newWord
+
+    } catch (error) {
+        return word
+    }
+}
+
+function hideModal(id) {
     let modalElement = document.getElementById(id);
     modalElement.classList.remove('show');
     modalElement.style.display = 'none';
@@ -118,7 +130,7 @@ function updatePage() {
     updateNameDisplay()
 }
 
-function userLogout(){
+function userLogout() {
     currentUser = "Anonymous"
     document.getElementById('login-button').style.display = 'block';
     document.getElementById('logout-button').style.display = 'none';
@@ -129,36 +141,79 @@ function updateNameDisplay() {
     document.getElementById('name-div').innerHTML = currentUser;
 }
 
-
 async function updateTitle() {
-    await fetch(`${localHost}/goatData/${currentSpecies}/title`)
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('display-center').innerHTML = data;
-    })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-        displayErrorMessage();
-    });
-}
-
-async function updateInformation() {
-    await fetch(`${localHost}/goatData/${currentSpecies}/form/${informationSelection}`)
-        .then(response => response.text())
+    await fetch(`${localHost}/goatData/${currentSpecies}`)
+        .then(response => response.json())
         .then(data => {
-            document.getElementById('information-div').innerHTML = data;
+            document.getElementById('display-center').innerHTML = `<strong> > ${data["name"].toString()} < </strong>`;
+
         })
         .catch(error => {
             console.error('Error fetching data:', error);
-            displayErrorMessage();
+        });
+}
+
+async function updateInformation() {
+    const queryType = informationSelection
+
+    const stringFind = ["Pros", "Cons"];
+    const proConColourDict = { 1: "bg-success-subtle", 2: "bg-danger-subtle" };
+
+    let headerPosition = 0;
+    let list = [];
+    await fetch(`${localHost}/goatData/${currentSpecies}`)
+        .then(response => response.json())
+        .then(data => {
+            switch (queryType) {
+
+                case 'pro-con':
+                    for (let i = 0; i < data[queryType].length; i++) {
+                        let entry = data[queryType][i];
+                        if (entry.includes(stringFind[headerPosition])) {
+                            headerPosition += 1;
+                            list.push(`
+                        <div class="col text-start ${proConColourDict[headerPosition]} border border-dark p-3 text-center">
+                        <h2> > ${entry} < </h2>
+                        </div>
+                        `);
+                            continue;
+                        }
+                        list.push(`
+                    <div class="col text-start ${proConColourDict[headerPosition]} border border-dark p-2">
+                    ${entry}
+                    </div>
+                    `);
+                    }
+                    document.getElementById('information-div').innerHTML = list.join('');
+                    break;
+
+                case 'biology':
+                case 'history':
+                case 'faq':
+                    for (let i = 0; i < data[queryType].length; i++) {
+                        let entry = data[queryType][i];
+                        list.push(`
+                    <div class="col text-start fs-6 ${itemColourDict[i % 2]} border border-dark p-2">
+                    ${entry}
+                    </div>
+                    `);
+                    }
+                    document.getElementById('information-div').innerHTML = list.join('');
+                    break;
+            }
+
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
         });
 }
 
 async function updateCommentInfo() {
-    await fetch(`${localHost}/goatData/${currentSpecies}/formInfo`)
-        .then(response => response.text())
+    await fetch(`${localHost}/goatData/${currentSpecies}`)
+        .then(response => response.json())
         .then(data => {
-            document.getElementById('comment-info-div').innerHTML = data;
+            let HTML = `<p class="lead fst-italic fs-4 text-end">Viewing <b>${data["name"].toString()}</b> form</p>`;
+            document.getElementById('comment-info-div').innerHTML = HTML;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -167,10 +222,40 @@ async function updateCommentInfo() {
 }
 
 async function updateCommentThread() {
-    await fetch(`${localHost}/goatData/${currentSpecies}/commentThread/${orderingSelection}`)
-        .then(response => response.text())
+    let list = [];
+    let HTML;
+    await fetch(`${localHost}/commentData/${currentSpecies}/${orderingSelection}`)
+        .then(response => response.json())
         .then(data => {
-            document.getElementById('comment-thread-div').innerHTML = data;
+            if (data.length === 0) {
+                list.push(`
+                <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[0]}">
+                <div class="col">
+                <div class="text-center"><strong>No one commented yet, be the first to do so!</div>
+                </div>
+                </div>
+                `);
+
+            } else {
+                for (let i = 0; i < data.length; i++) {
+                    list.push(`
+                    <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">
+                    <div class="col-4 border-end border-dark p-3">
+                    <div class="text-center" id="date_time_${i}">${data[i]["date"]} at ${data[i]["time"]}</div>
+                    <div class="text-center p-1" id="name_${i}">From : ${data[i]["name"]}</div>
+                    <div class="text-center p-1" id="likes_${i}">Likes : ${data[i]["like"]}</div>
+                    <button type="button" class="btn btn-success" onclick="likeComment('${data[i]["name"]}', '${data[i]["date"]}','${data[i]["time"]}')">Like</button>
+                    <div id="${data[i]["name"]}-${data[i]["date"]}-${data[i]["time"]}"></div>
+                    </div>
+                    <div class="col-8 d-flex align-items-center justify-content-center">
+                    <div class="text-center scroll-item">${data[i]["comment"]}</div>
+                    </div>
+                    </div>
+                    `);
+                }
+            }
+            HTML = list.join('');
+            document.getElementById('comment-thread-div').innerHTML = HTML;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -179,14 +264,71 @@ async function updateCommentThread() {
 }
 
 async function updateImg() {
-    await fetch(`${localHost}/goatData/${currentSpecies}/image`)
-        .then(response => response.text())
+    let HTML;
+    let species = currentSpecies;
+    let list = [];
+    await fetch(`${localHost}/imageData/${currentSpecies}`)
+        .then(response => response.json())
         .then(data => {
-            document.getElementById('img-div').innerHTML = data;
+
+            list.push(`
+            <div id="carouselExampleCaptions" class="carousel slide">
+            <div class="carousel-indicators">
+                `);
+
+            for (let i = 0; i < data["image"].length; i++) {
+                let activeClass = i;
+                if (i === 0) {
+                    activeClass = ` class="active" aria-current="true"`
+                } else {
+                    activeClass = ``
+                }
+                list.push(`
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Uploaded by ${data.uploader[i]}">
+                </button>
+                `);
+            }
+
+            list.push(`
+                </div>
+                <div class="carousel-inner">
+                `);
+
+            for (let i = 0; i < data["image"].length; i++) {
+                let activeClass = i;
+                if (i === 0) {
+                    activeClass = ` active`
+                } else {
+                    activeClass = ``
+                }
+                list.push(`
+                <div class="carousel-item${activeClass}">
+                <img id="carousel-img" class="p-2" src="assets/images/${species}/${data.image[i]}.jpg" class="d-block w-100" alt="${species} image ${data.image[i]}">
+                    <div class="carousel-caption d-none d-md-block text-dark">
+                        <h5><strong class="carousel-text glow">${upperCase(data.image[i])}</strong></h5>
+                        <p><strong class="carousel-text glow">Uploaded by ${data.uploader[i]}</strong></p>        
+                    </div>
+                </div>
+                `);
+            }
+
+            list.push(`
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            </div>
+            `);
+            HTML = list.join('');
+            document.getElementById('img-div').innerHTML = HTML;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
-            displayErrorMessage();
         });
 }
 
@@ -227,25 +369,25 @@ async function submitComment() {
     updateCommentThread()
 }
 
-async function signUpUser(){
+async function signUpUser() {
     const passwordData = document.getElementById('password-signup').value;
     const usernameData = document.getElementById('username-signup').value;
 
-    if (usernameData === ""){
+    if (usernameData === "") {
         document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
         return;
     } else {
         document.getElementById('modal-signup-alert').innerHTML = ``;
     }
 
-    if (passwordData === ""){
+    if (passwordData === "") {
         document.getElementById('modal-signup-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
         return;
     } else {
         document.getElementById('modal-signup-alert').innerHTML = ``;
     }
 
-    
+
 
     let data = {
         username: usernameData,
@@ -271,27 +413,27 @@ async function signUpUser(){
     hideModal('signup-modal')
 }
 
-async function userLogin(){
+async function userLogin() {
     const usernameData = document.getElementById('username-login').value;
     const passwordData = document.getElementById('password-login').value;
 
-    if (usernameData === ""){
+    if (usernameData === "") {
         document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Username!</div>`;
         return;
     } else {
         document.getElementById('modal-login-alert').innerHTML = ``;
     }
 
-    if (passwordData === ""){
+    if (passwordData === "") {
         document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">You Can't Have A Empty Password!</div>`;
         return;
     } else {
         document.getElementById('modal-login-alert').innerHTML = ``;
     }
-    
+
     let data = {
-        username : usernameData,
-        password : passwordData
+        username: usernameData,
+        password: passwordData
     };
     data = JSON.stringify(data);
 
@@ -303,13 +445,13 @@ async function userLogin(){
         body: data
     });
 
-    
+
     const responseText = await response.text();
     if (responseText === "invalidLogin") {
         document.getElementById('modal-login-alert').innerHTML = `<div class="alert alert-danger" role="alert">Login Does Not To Any In The Database!</div>`;
         return;
     }
-    
+
     currentUser = responseText;
     document.getElementById('login-button').style.display = 'none';
     document.getElementById('logout-button').style.display = 'block';
@@ -334,11 +476,11 @@ async function uploadPhoto() {
         document.getElementById('upload-alert-div').innerHTML = `<div class="alert alert-danger" role="alert">You Must Be Login To Upload A Image!</div>`;
         return
     }
-    
+
     const data = new FormData();
     data.append('photo', photoUpload.files[0]);
     let fileName = photoUpload.files[0].name;
-    fileName = fileName.substring(0, fileName.length-4);
+    fileName = fileName.substring(0, fileName.length - 4);
 
     const response = await fetch(`${localHost}/post/${currentSpecies}/uploadPhoto`, {
         method: 'POST',
@@ -346,9 +488,9 @@ async function uploadPhoto() {
     });
 
     let data2 = {
-        species : currentSpecies,
-        image : fileName,
-        uploader : currentUser
+        species: currentSpecies,
+        image: fileName,
+        uploader: currentUser
     }
     data2 = JSON.stringify(data2);
 
@@ -373,10 +515,10 @@ async function likeComment(name, date, time) {
             document.getElementById(`${name}-${date}-${time}`).innerHTML = ``;
         }
         let data = {
-            name : name,
-            date : date,
-            time : time,
-            currentUser : currentUser,
+            name: name,
+            date: date,
+            time: time,
+            currentUser: currentUser,
         }
 
         data = JSON.stringify(data);
@@ -399,7 +541,7 @@ async function likeComment(name, date, time) {
             document.getElementById(`${name}-${date}-${time}`).innerHTML = ``;
             updateCommentThread()
         }
-        
+
     } catch (error) {
         console.error('Error fetching data:', error);
     }

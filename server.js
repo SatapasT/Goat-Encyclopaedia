@@ -32,7 +32,6 @@ const goatDataPath = 'data/goat_data.json';
 const threadDataPath = 'data/thread_data.json';
 const userDataPath = 'data/user_data.json';
 const imageDataPath = 'data/image_data.json';
-const itemColourDict = { 0: "bg-light-subtle", 1: "bg-dark-subtle"};
 
 let goatData, threadData, userData, imageData;
 
@@ -53,18 +52,7 @@ function validateData(data) {
     }
 }
 
-function upperCase(word) {
-    try {
-        const firstLetter = word.charAt(0)
-        const newWord = firstLetter.toUpperCase() + word.substring(1)
-        return newWord
-
-    } catch (error) {
-        return word
-    }
-}
-
-app.get('/goatData/:species/title', (request, response) => {
+app.get('/goatData/:species', (request, response) => {
     try {
         const species = request.params.species;
         const goatEntry = goatData.find(entry => entry.species.includes(species));
@@ -72,74 +60,14 @@ app.get('/goatData/:species/title', (request, response) => {
             response.send(`Error fetching data`)
             return;
         }
-        response.send(`<strong> > ${goatEntry["name"].toString()} < </strong>`);
+        response.send(goatEntry);
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
     }
 });
 
-app.get('/goatData/:species/form/:value', (request, response) => {
-    try {
-        const species = request.params.species;
-        const queryType = request.params.value;
-        const goatEntry = goatData.find(entry => entry.species.includes(species));
-
-        if (!validateData(goatEntry)) {
-            response.status(500).send('Internal server error');
-            return;
-        }
-
-        const stringFind = ["Pros", "Cons"];
-        const proConColourDict = { 1: "bg-success-subtle", 2: "bg-danger-subtle"};
-
-        let headerPosition = 0;
-        let list = [];
-        
-        switch (queryType) {
-
-            case 'pro-con':
-                for (let i = 0; i < goatEntry[queryType].length; i++) {
-                    let entry = goatEntry[queryType][i];
-                    if (entry.includes(stringFind[headerPosition])) {
-                        headerPosition += 1;
-                        list.push(`
-                        <div class="col text-start ${proConColourDict[headerPosition]} border border-dark p-3 text-center">
-                        <h2> > ${entry} < </h2>
-                        </div>
-                        `);
-                        continue;
-                    }
-                    list.push(`
-                    <div class="col text-start ${proConColourDict[headerPosition]} border border-dark p-2">
-                    ${entry}
-                    </div>
-                    `);
-                }
-                response.send(list.join(''));
-                break;
-
-            case 'biology':
-            case 'history':
-            case 'faq':
-                for (let i = 0; i < goatEntry[queryType].length; i++) {
-                    let entry = goatEntry[queryType][i];
-                    list.push(`
-                    <div class="col text-start fs-6 ${itemColourDict[i % 2]} border border-dark p-2">
-                    ${entry}
-                    </div>
-                    `);
-                }
-                response.send(list.join(''));
-                break;
-            }
-    } catch (error) {
-        response.status(500).send('Internal server error');
-        console.error(error.message);
-    }
-});
-
-app.get('/goatData/:species/image', (request, response) => {
+app.get('/imageData/:species', (request, response) => {
     try {
         const species = request.params.species;
         const goatImg = imageData.find(entry => entry.species.includes(species));
@@ -148,88 +76,15 @@ app.get('/goatData/:species/image', (request, response) => {
             response.status(500).send('Internal server error');
             return;
         }
-
-        let list = [];
-
-        list.push(`
-            <div id="carouselExampleCaptions" class="carousel slide">
-            <div class="carousel-indicators">
-                `);
-
-            for (let i = 0; i < goatImg["image"].length; i++) {
-                let activeClass = i;
-                if (i === 0) {
-                    activeClass = ` class="active" aria-current="true"`
-                } else {
-                    activeClass = ``
-                }
-                list.push(`
-                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Uploaded by ${goatImg.uploader[i]}">
-                </button>
-                `);
-            }
-
-            list.push(`
-                </div>
-                <div class="carousel-inner">
-                `);
-
-        
-            for (let i = 0; i < goatImg["image"].length; i++) {
-                let activeClass = i;
-                if (i === 0) {
-                    activeClass = ` active`
-                } else {
-                    activeClass = ``
-                }
-                list.push(`
-                <div class="carousel-item${activeClass}">
-                <img id="carousel-img" class="p-2" src="assets/images/${species}/${goatImg.image[i]}.jpg" class="d-block w-100" alt="${species} image ${goatImg.image[i]}">
-                    <div class="carousel-caption d-none d-md-block text-dark">
-                        <h5><strong class="carousel-text glow">${upperCase(goatImg.image[i])}</strong></h5>
-                        <p><strong class="carousel-text glow">Uploaded by ${goatImg.uploader[i]}</strong></p>        
-                    </div>
-                </div>
-                `);
-            }
-
-            list.push(`
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-            </div>
-            `);
-            response.send(list.join(''));
+        response.send(goatImg)
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
     }
 });
 
-app.get('/goatData/:species/formInfo', (request, response) => {
-    try {
-        const species = request.params.species;
-        const goatEntry = goatData.find(entry => entry.species.includes(species));
 
-        if (!validateData(goatEntry)) {
-            response.status(500).send('Internal server error');
-            return;
-        }
-
-        response.send(`<p class="lead fst-italic fs-4 text-end">Viewing <b>${goatEntry["name"].toString()}</b> form</p>`);
-    } catch (error) {
-        response.status(500).send('Internal server error');
-        console.error(error.message);
-    }
-});
-
-app.get('/goatData/:species/commentThread/:ordering', (request, response) => {
+app.get('/commentData/:species/:ordering', (request, response) => {
     try {
         const species = request.params.species;
         const ordering = request.params.ordering;
@@ -248,35 +103,7 @@ app.get('/goatData/:species/commentThread/:ordering', (request, response) => {
             commentEntry.reverse();
         }
 
-        let list = [];
-        if (commentEntry.length === 0) {
-            list.push(`
-            <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[0]}">
-            <div class="col">
-            <div class="text-center"><strong>No one commented yet, be the first to do so!</div>
-            </div>
-            </div>
-            `);
-            
-        } else {
-            for (let i = 0; i < commentEntry.length; i++) {
-                list.push(`
-                <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">
-                <div class="col-4 border-end border-dark p-3">
-                <div class="text-center" id="date_time_${i}">${commentEntry[i]["date"]} at ${commentEntry[i]["time"]}</div>
-                <div class="text-center p-1" id="name_${i}">From : ${commentEntry[i]["name"]}</div>
-                <div class="text-center p-1" id="likes_${i}">Likes : ${commentEntry[i]["like"]}</div>
-                <button type="button" class="btn btn-success" onclick="likeComment('${commentEntry[i]["name"]}', '${commentEntry[i]["date"]}','${commentEntry[i]["time"]}')">Like</button>
-                <div id="${commentEntry[i]["name"]}-${commentEntry[i]["date"]}-${commentEntry[i]["time"]}"></div>
-                </div>
-                <div class="col-8 d-flex align-items-center justify-content-center">
-                <div class="text-center scroll-item">${commentEntry[i]["comment"]}</div>
-                </div>
-                </div>
-                `);
-            }
-        }
-        response.send(list.join(''));
+        response.send(commentEntry);
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
@@ -284,7 +111,7 @@ app.get('/goatData/:species/commentThread/:ordering', (request, response) => {
 });
 
 app.post('/post/commentData', (request, response) => {
-    try{
+    try {
         let commentData = request.body;
         threadData.push(commentData);
         fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
@@ -296,16 +123,16 @@ app.post('/post/commentData', (request, response) => {
 });
 
 app.post('/post/signupData', (request, response) => {
-    try{
-        const data =  request.body;
+    try {
+        const data = request.body;
         const nameEntry = userData.find(entry => entry.username === data.username);
-            if (nameEntry) {
-                response.send("usernameTaken");
-                return
-            }
-            userData.push(data);
-            fs.writeFileSync(userDataPath, JSON.stringify(userData));
-            response.send(`Successfully posted the data`);
+        if (nameEntry) {
+            response.send("usernameTaken");
+            return
+        }
+        userData.push(data);
+        fs.writeFileSync(userDataPath, JSON.stringify(userData));
+        response.send(`Successfully posted the data`);
     } catch (error) {
         response.status(500).send('Internal server error');
         console.error(error.message);
@@ -313,8 +140,8 @@ app.post('/post/signupData', (request, response) => {
 });
 
 app.post('/post/loginStatus', (request, response) => {
-    try{
-        const data =  request.body;
+    try {
+        const data = request.body;
         const usernameEntry = data.username
         const passwordEntry = data.password
         const usernameMatching = userData.find(entry => entry.username === usernameEntry);
@@ -347,16 +174,16 @@ app.post('/post/:species/photoData', upload.single('photo'), function (request, 
     try {
         const species = request.params.species;
         const fileName = request.body.image;
-        const usernameData =  request.body.uploader;
-    
+        const usernameData = request.body.uploader;
+
         const goatImg = imageData.find(entry => entry.species.includes(species));
 
         goatImg.image.push(fileName);
         goatImg.uploader.push(usernameData);
-        
+
         fs.writeFileSync(imageDataPath, JSON.stringify(imageData));
         response.send(`Successfully posted the data`);
-        
+
     } catch (error) {
         console.error(error);
         response.status(500).send(`Internal server error: ${error.message}`);
@@ -373,19 +200,19 @@ app.post('/post/like', (request, response) => {
         const likeEntryName = threadData.filter(entry => entry.name.includes(name));
 
 
-        if (!(likeEntryName)){
+        if (!(likeEntryName)) {
             response.send("error")
             return
         }
 
         const likeEntryDate = threadData.filter(entry => entry.date.includes(date));
-        if (!(likeEntryDate)){
+        if (!(likeEntryDate)) {
             response.send("error")
             return
         }
 
         const likeEntry = threadData.filter(entry => entry.time.includes(time));
-        if (!(likeEntry)){
+        if (!(likeEntry)) {
             response.send("error")
             return
         }
@@ -403,9 +230,9 @@ app.post('/post/like', (request, response) => {
         matchingEntry.likeBy.push(currentUser);
         matchingEntry.like = likeEntry[0].likeBy.length;
         threadData[index] = matchingEntry;
-        
+
         fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
-        response.send("success") 
+        response.send("success")
 
     } catch (error) {
         console.error(error);
