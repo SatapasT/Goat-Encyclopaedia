@@ -587,7 +587,7 @@ document.getElementById('logout-button').addEventListener('click', userLogout)
 document.getElementById('modal-login-button').addEventListener('click', userLogin)
 document.getElementById('upload-button').addEventListener('click', uploadPhoto)
 document.getElementById('ordering-select').addEventListener('change', orderingSelected)
-document.getElementById('comment-thread-div').addEventListener('click', function (event) {
+document.getElementById('comment-thread-div').addEventListener('click', event => {
   likeButtonClick(event)
 })
 document.getElementById('reload-button').addEventListener('click', checkErrorServerStatus)
