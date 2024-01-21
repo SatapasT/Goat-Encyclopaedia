@@ -17,7 +17,6 @@ body {
     z-index: 0;
 }
 
-
 .container {
     position: relative;
     z-index: 1;
@@ -85,7 +84,6 @@ body {
     align-items: center;
     justify-content: center;
 }
-
 
 .glow {
     color: black;
