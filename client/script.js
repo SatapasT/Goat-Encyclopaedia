@@ -6,8 +6,9 @@ let orderingSelection = "time";
 
 function initializeHTML() {
     document.getElementById('login-button').style.display = 'block';
+    document.getElementById('information-select').selectedIndex = 0;
+    document.getElementById('ordering-select').selectedIndex = 0;
     fetchDataDefault()
-    
 }
 function hideModal(id){
     let modalElement = document.getElementById(id);

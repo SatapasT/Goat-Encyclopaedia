@@ -62,7 +62,6 @@ function upperCase(word) {
     } catch (error) {
         return word
     }
-    
 }
 
 app.get('/goatData/:species/title', (request, response) => {
@@ -79,7 +78,6 @@ app.get('/goatData/:species/title', (request, response) => {
         console.error(error.message);
     }
 });
-
 
 app.get('/goatData/:species/form/:value', (request, response) => {
     try {
@@ -246,6 +244,8 @@ app.get('/goatData/:species/commentThread/:ordering', (request, response) => {
             commentEntry.sort((a, b) => a.like - b.like);
         } else if (ordering === "descending") {
             commentEntry.sort((a, b) => b.like - a.like);
+        } else if (ordering === "time-newest") {
+            commentEntry.reverse();
         }
 
         let list = [];
