@@ -43,7 +43,7 @@ function displayErrorMessage() {
                 </div>
             </div>
         </div>
-`;
+    `;
 }
 
 function checkErrorServerStatus() {
