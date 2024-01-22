@@ -246,10 +246,10 @@ async function updateCommentThread () {
           list.push(`
                     <div class="row mt-2 mb-2 border border-dark p-3 ${itemColourDict[i % 2]}">
                     <div class="col-4 border-end border-dark p-3">
-                    <div class="text-center" id="date_time_${i}">${data[i].date} at ${data[i].time}</div>
-                    <div class="text-center p-1" id="name_${i}">From : ${data[i].name}</div>
-                    <div class="text-center p-1" id="likes_${i}">Likes : ${data[i].like}</div>
-                    <button type="button" class="btn btn-success" id="${data[i].name}-${data[i].date}-${data[i].time}">Like</button>
+                    <div class="text-center fst-italic" id="date_time_${i}">${data[i].date} at ${data[i].time}</div>
+                    <div class="text-center" id="name_${i}"><strong>${data[i].name}</strong></div>
+                    <div class="text-center p-1" id="likes_${i}">Likes : <strong>${data[i].like}</strong></div>
+                    <button type="button" class="btn btn-success border border-dark rounded-5" id="${data[i].name}-${data[i].date}-${data[i].time}">Like</button>
                     <div id="alert-${data[i].name}-${data[i].date}-${data[i].time}"></div>
                     </div>
                     <div class="col-8 d-flex align-items-center justify-content-center">
