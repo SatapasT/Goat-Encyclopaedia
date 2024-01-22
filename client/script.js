@@ -272,6 +272,9 @@ async function updateImg () {
         } else {
           activeClass = '';
         }
+        if (data.uploader[i] === null) {
+          continue;
+        }
         list.push(`
           <button type="button" data-bs-target="#carouselCaptions" data-bs-slide-to="${i}"${activeClass} aria-label="Uploaded by ${data.uploader[i]}">
           </button>
@@ -289,6 +292,9 @@ async function updateImg () {
           activeClass = ' active';
         } else {
           activeClass = '';
+        }
+        if (data.image[i] === null) {
+          continue;
         }
         list.push(`
                   <div class="carousel-item${activeClass}">
@@ -518,7 +524,7 @@ async function uploadPhoto () {
     }
   );
 
-  const responseText2 = await response2.text()
+  const responseText2 = await response2.text();
   if (!(responseText2 === 'success')) {
     displayErrorMessage();
     return;
