@@ -2,10 +2,9 @@
 
 const request = require('supertest');
 const app = require('./server');
-const path = require('path');
 const fs = require('fs');
 
-let server = app.listen(8080, () => {
+const server = app.listen(8080, () => {
   console.log(`Server is running on port ${server.address().port}`);
 });
 
@@ -36,22 +35,22 @@ describe('Test the custom server endpoints', () => {
     }
   }
   test('POST /post/signupData succeeds', () => {
-    const params = { newthing: 'TechUp' };
+    const newUser = { username: 'newUser', password: 'password123' };
     return request(app)
     .post('/post/signupData')
-    .send(params)
+    .send(newUser)
   .expect(200);
   });
   test('POST /post/loginStatus succeeds', () => {
-    const params = { newthing: 'TechUp' };
+    const data = { username: 'test', password: 'test' };
     return request(app)
     .post('/post/loginStatus')
-    .send(params)
+    .send(data)
   .expect(200);
   });
   for (let i = 0; i < goatList.length; i++) {
     test(`POST /post/${goatList[i]}/uploadPhoto succeeds`, async () => {
-      const filePath = path.join('client/assets/images/ufo_goat_emoji.png');
+      const filePath = 'client/assets/images/ufo_goat_emoji.png';
       const fileData = fs.readFileSync(filePath);
 
       return request(app)
@@ -62,10 +61,10 @@ describe('Test the custom server endpoints', () => {
   }
   for (let i = 0; i < goatList.length; i++) {
     test(`POST /post/${goatList[i]}/photoData succeeds`, () => {
-      const params = { newthing: 'TechUp' };
+      const imgInfo = { image: null, uploader: null };
       return request(app)
       .post(`/post/${goatList[i]}/photoData`)
-      .send(params)
+      .send(imgInfo)
     .expect(200);
     });
   }

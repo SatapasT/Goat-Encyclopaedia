@@ -121,6 +121,7 @@ function updatePage () {
   updateCommentThread();
   updateImg();
   updateNameDisplay();
+  clearAlert();
 }
 
 function userLogout () {
@@ -132,6 +133,20 @@ function userLogout () {
 
 function updateNameDisplay () {
   document.getElementById('name-div').innerHTML = currentUser;
+}
+
+function clearModalAlert () {
+  document.getElementById('modal-login-alert').innerHTML = '';
+  document.getElementById('modal-signup-alert').innerHTML = '';
+  document.getElementById('modal-password-alert').innerHTML = '';
+}
+
+function clearAlert () {
+  document.getElementById('comment-alert-div').innerHTML = '';
+  document.getElementById('modal-signup-alert').innerHTML = '';
+  document.getElementById('modal-password-alert').innerHTML = '';
+  document.getElementById('modal-login-alert').innerHTML = '';
+  document.getElementById('upload-alert-div').innerHTML = '';
 }
 
 async function updateTitle () {
@@ -298,13 +313,13 @@ async function updateImg () {
         }
         list.push(`
                   <div class="carousel-item${activeClass}">
-                  <img id="carousel-img" class="p-2" src="assets/images/${species}/${data.image[i]}.jpg" class="d-block w-100" alt="${species} image ${data.image[i]}">
+                  <img id="carousel-img" class="p-3" src="assets/images/${species}/${data.image[i]}.jpg" class="d-block w-100" alt="${species} image ${data.image[i]}">
                   <div class="carousel-caption d-none d-md-block text-dark">
                   <h5>
-                  <strong class="carousel-text glow">${upperCase(data.image[i])}</strong>
+                  <strong class="carousel-text glow ">${upperCase(data.image[i])}</strong>
                   </h5>
                   <p>
-                  <strong class="carousel-text glow">Uploaded by ${data.uploader[i]}</strong>
+                  <strong class="carousel-text glow p-2 in-front">Uploaded by ${data.uploader[i]}</strong>
                   </p>        
                   </div>
                   </div>
@@ -604,5 +619,9 @@ document.getElementById('comment-thread-div').addEventListener('click', (event) 
     likeButtonClick(event);
 });
 document.getElementById('reload-button').addEventListener('click', checkErrorServerStatus);
+document.getElementById('login-modal-dismiss').addEventListener('click', clearModalAlert);
+document.getElementById('login-modal-close').addEventListener('click', clearModalAlert);
+document.getElementById('signup-modal-dismiss').addEventListener('click', clearModalAlert);
+document.getElementById('signup-modal-close').addEventListener('click', clearModalAlert);
 
 setInterval(checkServerStatus, 10000);

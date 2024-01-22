@@ -100,6 +100,10 @@ body {
     height: 100vh;
 }
 
+.in-front {
+    z-index : 3;
+}
+
 #error-page {
     position: absolute; 
     top: 0;
