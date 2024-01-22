@@ -329,11 +329,11 @@ async function updateImg () {
       list.push(`
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselCaptions" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="carousel-control-prev-icon border border-dark bg-dark" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#carouselCaptions" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="carousel-control-next-icon border border-dark bg-dark" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
         </button>
         </div>
@@ -359,8 +359,6 @@ async function submitComment () {
       '<div class="alert alert-danger" role="alert">You Can Not Leave A Empty Comment!</div>';
     return;
   } else {
-    document.getElementById('login-button').style.display = 'block';
-    document.getElementById('logout-button').style.display = 'none';
     document.getElementById('comment-alert-div').innerHTML = '';
   }
 
@@ -594,7 +592,6 @@ async function likeComment (name, date, time) {
 }
 
 function likeButtonClick (event) {
-  console.log(event.target.tagName);
   if (event.target.tagName === 'BUTTON') {
     const buttonId = event.target.id;
     const [name, date, time] = buttonId.split('-');

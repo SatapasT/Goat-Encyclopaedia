@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const multer = require('multer');
+const path = require('path');
 
 // from https://www.npmjs.com/package/multer
 const storage = multer.diskStorage({
@@ -12,7 +13,8 @@ const storage = multer.diskStorage({
     cb(null, filePath);
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const newFilename = file.originalname;
+    cb(null, newFilename);
   }
 });
 
@@ -28,10 +30,10 @@ app.use((request, response, next) => {
 });
 
 app.use(express.json());
-const goatDataPath = 'data/goat_data.json';
-const threadDataPath = 'data/thread_data.json';
-const userDataPath = 'data/user_data.json';
-const imageDataPath = 'data/image_data.json';
+const goatDataPath = path.join('data', 'goat_data.json');
+const threadDataPath = path.join('data', 'thread_data.json');
+const userDataPath = path.join('data', 'user_data.json');
+const imageDataPath = path.join('data', 'image_data.json');
 
 let goatData, threadData, userData, imageData;
 
@@ -167,10 +169,7 @@ app.post('/post/loginStatus', (request, response) => {
 
 // From https://www.npmjs.com/package/multer
 
-app.post(
-  '/post/:species/uploadPhoto',
-  upload.single('photo'),
-  function (request, response) {
+app.post('/post/:species/uploadPhoto', upload.single('photo'), function (request, response) {
     try {
       if (!request.file) {
         return response.status(400).send('No file uploaded.');
