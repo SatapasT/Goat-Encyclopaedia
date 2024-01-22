@@ -250,7 +250,7 @@ async function updateCommentThread () {
                     <div class="text-center" id="name_${i}"><strong>${data[i].name}</strong></div>
                     <div class="text-center p-1" id="likes_${i}">Likes : <strong>${data[i].like}</strong></div>
                     <button type="button" class="btn btn-success border border-dark rounded-5" id="${data[i].name}-${data[i].date}-${data[i].time}">Like</button>
-                    <div id="alert-${data[i].name}-${data[i].date}-${data[i].time}"></div>
+                    <div class="p-2" id="alert-${data[i].name}-${data[i].date}-${data[i].time}"></div>
                     </div>
                     <div class="col-8 d-flex align-items-center justify-content-center">
                     <div class="text-center scroll-item">${data[i].comment}</div>
