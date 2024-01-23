@@ -89,9 +89,7 @@ app.get('/commentData', (request, response) => {
   try {
     const species = request.query.species;
     const ordering = request.query.ordering;
-    const commentEntry = threadData.filter((entry) =>
-      entry.species.includes(species)
-    );
+    const commentEntry = threadData.filter((entry) => entry.species.includes(species));
 
     if (!validateData(commentEntry)) {
       response.status(500).send('Internal server error');
@@ -129,8 +127,7 @@ app.post('/post/signupData', (request, response) => {
   try {
     const data = request.body;
     const nameEntry = userData.find(
-      (entry) => entry.username === data.username
-    );
+      (entry) => entry.username === data.username);
     if (nameEntry) {
       response.send('usernameTaken');
       return;
@@ -190,9 +187,7 @@ app.post('/post/imageData',
       const fileName = request.body.image;
       const usernameData = request.body.uploader;
 
-      const goatImg = imageData.find((entry) =>
-        entry.species.includes(species)
-      );
+      const goatImg = imageData.find((entry) => entry.species.includes(species));
 
       goatImg.image.push(fileName);
       goatImg.uploader.push(usernameData);
@@ -213,18 +208,14 @@ app.post('/post/like', (request, response) => {
     const date = data.date;
     const time = data.time;
     const currentUser = data.currentUser;
-    const likeEntryName = threadData.filter((entry) =>
-      entry.name.includes(name)
-    );
+    const likeEntryName = threadData.filter((entry) => entry.name.includes(name));
 
     if (!likeEntryName) {
       response.send('error');
       return;
     }
 
-    const likeEntryDate = threadData.filter((entry) =>
-      entry.date.includes(date)
-    );
+    const likeEntryDate = threadData.filter((entry) => entry.date.includes(date));
     if (!likeEntryDate) {
       response.send('error');
       return;
@@ -245,10 +236,7 @@ app.post('/post/like', (request, response) => {
       }
     }
 
-    const index = threadData.findIndex(
-      (entry) =>
-        entry.name === name && entry.date === date && entry.time === time
-    );
+    const index = threadData.findIndex((entry) => entry.name === name && entry.date === date && entry.time === time);
     matchingEntry.likeBy.push(currentUser);
     matchingEntry.like = likeEntry[0].likeBy.length;
     threadData[index] = matchingEntry;

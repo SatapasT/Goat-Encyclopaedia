@@ -1,2 +1,6 @@
 const app = require('./server');
-app.listen(8080);
+
+const port = 8080;
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}/`);
+});
