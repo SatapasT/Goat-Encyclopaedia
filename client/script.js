@@ -169,8 +169,8 @@ async function updateInformation () {
 
   const stringFind = ['Pros', 'Cons'];
   const proConColourDict = { 1: 'bg-success-subtle', 2: 'bg-danger-subtle' };
-
   let headerPosition = 0;
+
   await fetch(`${localHost}/goatData?species=${currentSpecies}`)
     .then((response) => response.json())
     .then((data) => {
