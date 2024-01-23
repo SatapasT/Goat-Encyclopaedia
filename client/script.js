@@ -19,7 +19,7 @@ function initializeHTML () {
 }
 
 function checkServerStatus () {
-  fetch(`${localHost}/goatData/default_goal`)
+  fetch(`${localHost}/goatData`)
     .then((response) => {
       if (!response.ok) {
         displayErrorMessage();
@@ -39,7 +39,7 @@ function displayErrorMessage () {
 }
 
 function checkErrorServerStatus () {
-  fetch(`${localHost}/goatData/default_goal`)
+  fetch(`${localHost}/goatData`)
     .then((response) => {
       if (response.ok) {
         document.getElementById('navbar').style.display = 'block';
@@ -150,7 +150,7 @@ function clearAlert () {
 }
 
 async function updateTitle () {
-  await fetch(`${localHost}/goatData/${currentSpecies}`)
+  await fetch(`${localHost}/goatData?species=${currentSpecies}`)
     .then((response) => response.json())
     .then((data) => {
       document.getElementById(
@@ -171,7 +171,7 @@ async function updateInformation () {
   const proConColourDict = { 1: 'bg-success-subtle', 2: 'bg-danger-subtle' };
 
   let headerPosition = 0;
-  await fetch(`${localHost}/goatData/${currentSpecies}`)
+  await fetch(`${localHost}/goatData?species=${currentSpecies}`)
     .then((response) => response.json())
     .then((data) => {
       switch (queryType) {
@@ -215,7 +215,7 @@ async function updateInformation () {
 }
 
 async function updateCommentInfo () {
-  await fetch(`${localHost}/goatData/${currentSpecies}`)
+  await fetch(`${localHost}/goatData?species=${currentSpecies}`)
     .then((response) => response.json())
     .then((data) => {
       const HTML = `<p class="lead fst-italic fs-4 text-end">Viewing <b>${data.name.toString()}</b> form</p>`;
@@ -223,14 +223,13 @@ async function updateCommentInfo () {
     })
     .catch((error) => {
       console.error('Error fetching data:', error);
-      displayErrorMessage();
     });
 }
 
 async function updateCommentThread () {
   const list = [];
   let HTML;
-  await fetch(`${localHost}/commentData/${currentSpecies}/${orderingSelection}`)
+  await fetch(`${localHost}/commentData?species=${currentSpecies}&ordering=${orderingSelection}`)
     .then((response) => response.json())
     .then((data) => {
       if (data.length === 0) {
@@ -272,7 +271,7 @@ async function updateImg () {
   let HTML;
   const species = currentSpecies;
   const list = [];
-  await fetch(`${localHost}/imageData/${currentSpecies}`)
+  await fetch(`${localHost}/imageData?species=${currentSpecies}`)
     .then((response) => response.json())
     .then((data) => {
       list.push(`
@@ -382,7 +381,6 @@ async function submitComment () {
   });
   const responseText = await response.text();
   if (!(responseText === 'success')) {
-    displayErrorMessage();
     return;
   }
   document.getElementById('comment-input').value = '';
@@ -507,7 +505,7 @@ async function uploadPhoto () {
   fileName = fileName.substring(0, fileName.length - 4);
 
   const response = await fetch(
-    `${localHost}/post/${currentSpecies}/uploadPhoto`,
+    `${localHost}/post/uploadImage?species=${currentSpecies}`,
     {
       method: 'POST',
       body: data
@@ -515,7 +513,6 @@ async function uploadPhoto () {
   );
   const responseText = await response.text();
   if (!(responseText === 'success')) {
-    displayErrorMessage();
     return;
   }
 
@@ -527,7 +524,7 @@ async function uploadPhoto () {
   data2 = JSON.stringify(data2);
 
   const response2 = await fetch(
-    `${localHost}/post/${currentSpecies}/photoData`,
+    `${localHost}/post/imageData?species=${currentSpecies}`,
     {
       method: 'POST',
       headers: {
@@ -539,7 +536,6 @@ async function uploadPhoto () {
 
   const responseText2 = await response2.text();
   if (!(responseText2 === 'success')) {
-    displayErrorMessage();
     return;
   }
 

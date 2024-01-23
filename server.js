@@ -7,8 +7,8 @@ const path = require('path');
 // from https://www.npmjs.com/package/multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const species = req.params.species;
-    const filePath = `client/assets/images/${species}`;
+    const species = req.query.species;
+    const filePath = path.join('client', 'assets', 'images', species);
     fs.mkdirSync(filePath, { recursive: true });
     cb(null, filePath);
   },
@@ -54,9 +54,9 @@ function validateData (data) {
   }
 }
 
-app.get('/goatData/:species', (request, response) => {
+app.get('/goatData', (request, response) => {
   try {
-    const species = request.params.species;
+    const species = request.query.species;
     const goatEntry = goatData.find((entry) => entry.species.includes(species));
     if (!validateData(goatEntry)) {
       response.send('Error fetching data');
@@ -69,13 +69,13 @@ app.get('/goatData/:species', (request, response) => {
   }
 });
 
-app.get('/imageData/:species', (request, response) => {
+app.get('/imageData', (request, response) => {
   try {
-    const species = request.params.species;
+    const species = request.query.species;
     const goatImg = imageData.find((entry) => entry.species.includes(species));
 
     if (!validateData(goatImg)) {
-      response.status(500).send('Internal server error');
+      response.send('Error fetching data');
       return;
     }
     response.send(goatImg);
@@ -85,10 +85,10 @@ app.get('/imageData/:species', (request, response) => {
   }
 });
 
-app.get('/commentData/:species/:ordering', (request, response) => {
+app.get('/commentData', (request, response) => {
   try {
-    const species = request.params.species;
-    const ordering = request.params.ordering;
+    const species = request.query.species;
+    const ordering = request.query.ordering;
     const commentEntry = threadData.filter((entry) =>
       entry.species.includes(species)
     );
@@ -169,7 +169,7 @@ app.post('/post/loginStatus', (request, response) => {
 
 // From https://www.npmjs.com/package/multer
 
-app.post('/post/:species/uploadPhoto', upload.single('photo'), function (request, response) {
+app.post('/post/uploadImage', upload.single('photo'), function (request, response) {
     try {
       if (!request.file) {
         return response.status(400).send('No file uploaded.');
@@ -182,12 +182,11 @@ app.post('/post/:species/uploadPhoto', upload.single('photo'), function (request
   }
 );
 
-app.post(
-  '/post/:species/photoData',
+app.post('/post/imageData',
   upload.single('photo'),
   function (request, response) {
     try {
-      const species = request.params.species;
+      const species = request.query.species;
       const fileName = request.body.image;
       const usernameData = request.body.uploader;
 
