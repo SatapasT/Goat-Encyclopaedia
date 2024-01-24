@@ -114,6 +114,11 @@ app.get('/commentData', (request, response) => {
 app.post('/post/commentData', (request, response) => {
   try {
     const commentData = request.body;
+    console.log(JSON.stringify(commentData) === '');
+    if (commentData.name.toString() === '') {
+      response.status(500).send('Internal server error');
+      return;
+    }
     threadData.push(commentData);
     fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
     response.send('success');
@@ -211,19 +216,19 @@ app.post('/post/like', (request, response) => {
     const likeEntryName = threadData.filter((entry) => entry.name.includes(name));
 
     if (!likeEntryName) {
-      response.send('error');
+      response.send('Error locating Data');
       return;
     }
 
     const likeEntryDate = threadData.filter((entry) => entry.date.includes(date));
     if (!likeEntryDate) {
-      response.send('error');
+      response.send('Error locating Data');
       return;
     }
 
     const likeEntry = threadData.filter((entry) => entry.time.includes(time));
     if (!likeEntry) {
-      response.send('error');
+      response.send('Error locating Data');
       return;
     }
 
@@ -239,6 +244,10 @@ app.post('/post/like', (request, response) => {
     const index = threadData.findIndex((entry) => entry.name === name && entry.date === date && entry.time === time);
     matchingEntry.likeBy.push(currentUser);
     matchingEntry.like = likeEntry[0].likeBy.length;
+    if (!index) {
+      response.send('Error locating Data');
+      return;
+    }
     threadData[index] = matchingEntry;
 
     fs.writeFileSync(threadDataPath, JSON.stringify(threadData));
