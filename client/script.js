@@ -355,7 +355,6 @@ async function submitComment () {
   const commentData = document.getElementById('comment-input').value;
 
   if (commentData === '') {
-    document.getElementById('logout-button').style.display = 'none';
     document.getElementById('comment-alert-div').innerHTML =
       '<div class="alert alert-danger" role="alert">You Can Not Leave A Empty Comment!</div>';
     return;
