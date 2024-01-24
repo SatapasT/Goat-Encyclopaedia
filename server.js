@@ -114,7 +114,6 @@ app.get('/commentData', (request, response) => {
 app.post('/post/commentData', (request, response) => {
   try {
     const commentData = request.body;
-    console.log(JSON.stringify(commentData) === '');
     if (commentData.name.toString() === '') {
       response.status(500).send('Internal server error');
       return;

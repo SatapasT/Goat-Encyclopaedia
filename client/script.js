@@ -139,6 +139,7 @@ function clearModalAlert () {
   document.getElementById('modal-login-alert').innerHTML = '';
   document.getElementById('modal-signup-alert').innerHTML = '';
   document.getElementById('modal-password-alert').innerHTML = '';
+  document.getElementById('modal-password-alert-2').innerHTML = '';
 }
 
 function clearAlert () {
@@ -146,6 +147,7 @@ function clearAlert () {
   document.getElementById('modal-signup-alert').innerHTML = '';
   document.getElementById('modal-password-alert').innerHTML = '';
   document.getElementById('modal-login-alert').innerHTML = '';
+  document.getElementById('modal-password-alert-2').innerHTML = '';
   document.getElementById('upload-alert-div').innerHTML = '';
 }
 
